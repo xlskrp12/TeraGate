@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\DXSystem">
+      <UniqueIdentifier>{c0612877-bee1-4add-a839-5f36bffca076}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXSystem\Graphic">
+      <UniqueIdentifier>{668efd7d-7e8e-4db6-a127-2d67157056c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXSystem\Graphic\Camera">
+      <UniqueIdentifier>{29dcfdbc-325a-43dc-a59d-abed5a312865}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXSystem\Graphic\ColorShader">
+      <UniqueIdentifier>{7647e319-9771-42d6-aeb1-88678afc24ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXSystem\Graphic\Direct">
+      <UniqueIdentifier>{5cee86c7-96c1-4ccf-913b-85581074e09f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXSystem\Graphic\Model">
+      <UniqueIdentifier>{5770bb46-de74-49e4-90ee-688e26f1200c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\_Main">
+      <UniqueIdentifier>{e90728b7-9e27-4824-8926-6b8ad9a50d0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameEngine">
+      <UniqueIdentifier>{ee1fe721-f288-4c83-8566-402ebd88a651}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameEngine\BaseApi">
+      <UniqueIdentifier>{87a4be1f-ee17-4cc8-8194-d5fc52044fff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameEngine\Object">
+      <UniqueIdentifier>{1e4a6822-11e2-4498-9b0c-c3a835f16db1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameEngine\Object\ObjectManager">
+      <UniqueIdentifier>{769714fb-4276-4544-a57a-9741956dfd33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameEngine\Scene">
+      <UniqueIdentifier>{562e918f-1b9b-4efc-995b-4a64dda3cf99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXSystem\Input">
+      <UniqueIdentifier>{002829dd-aa2c-4361-8052-4620237e19b4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Direct.cpp">
+      <Filter>Source Files\DXSystem\Graphic\Direct</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\DXSystem\Graphic\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorShader.cpp">
+      <Filter>Source Files\DXSystem\Graphic\ColorShader</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\DXSystem\Graphic\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files\_Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\GameEngine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files\GameEngine\BaseApi</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicalLaw.cpp">
+      <Filter>Source Files\GameEngine\BaseApi</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Source Files\GameEngine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>Source Files\GameEngine\Object\ObjectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="DXSystem.cpp">
+      <Filter>Source Files\DXSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source Files\DXSystem\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic.cpp">
+      <Filter>Source Files\DXSystem\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectZed.cpp">
+      <Filter>Source Files\GameEngine\Object</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Direct.h">
+      <Filter>Source Files\DXSystem\Graphic\Direct</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Source Files\DXSystem\Graphic\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorShader.h">
+      <Filter>Source Files\DXSystem\Graphic\ColorShader</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Source Files\DXSystem\Graphic\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Source Files\GameEngine\BaseApi</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicalLaw.h">
+      <Filter>Source Files\GameEngine\BaseApi</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Source Files\GameEngine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>Source Files\GameEngine\Object\ObjectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DXSystem.h">
+      <Filter>Source Files\DXSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Source Files\DXSystem\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic.h">
+      <Filter>Source Files\DXSystem\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Source Files\_Main</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectZed.h">
+      <Filter>Source Files\GameEngine\Object</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="개발일지.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Color.vs">
+      <Filter>Source Files\DXSystem\Graphic</Filter>
+    </None>
+    <None Include="Color.ps">
+      <Filter>Source Files\DXSystem\Graphic</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="개발일지.png">
+      <Filter>Source Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
