@@ -1,0 +1,4 @@
+Dest : Destination 목적지. 
+ID3D : Interface Direct3D, 이 외에도 다렉에서 접두어 I는 Interface를 의미.
+IA   : Input-Assembler 단계
+Desc : Description 서술

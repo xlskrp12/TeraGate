@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="0_Prev">
+      <UniqueIdentifier>{b6b08386-f5bf-4e86-8152-462662fcc314}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_GameModule">
+      <UniqueIdentifier>{e961ee2b-03f0-4183-8459-4b18b2d69add}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_GameModule\Keyboard">
+      <UniqueIdentifier>{2e5b4d11-df66-49c6-ac8f-45e92cb2e1cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_GameModule\HLSL">
+      <UniqueIdentifier>{59287b5a-c599-4489-a9d6-4879dc595670}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2_Entry">
+      <UniqueIdentifier>{6555f2b0-822c-4340-b2c4-38b046ce8667}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="0_Ark">
+      <UniqueIdentifier>{60f62037-527f-49eb-bd34-16b741e48572}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_GameModule\RendererModule">
+      <UniqueIdentifier>{d2be0e77-7275-46d3-a98c-9a5636498606}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_GameModule\ObjectManager">
+      <UniqueIdentifier>{d37ecee0-4c9e-454c-a8b9-ca09650d924f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_GameModule\ObjectManager\Object">
+      <UniqueIdentifier>{d0d0de37-5a36-4fdf-8af8-7545e4e7e8a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_GameModule\SceneManager">
+      <UniqueIdentifier>{334eedd4-d3ac-44ab-abfa-25a85eb452bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_GameModule\SceneManager\Scene">
+      <UniqueIdentifier>{d4ff50a8-acc6-4c11-aa32-c6e58908bf13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="1_GameModule\RendererModule\Shader">
+      <UniqueIdentifier>{9ae7c42a-9a1c-4148-b921-495f8b1778fd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Direct.h">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>1_GameModule</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>2_Entry</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
+      <Filter>1_GameModule\Keyboard</Filter>
+    </ClInclude>
+    <ClInclude Include="FBX.h">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>1_GameModule\ObjectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectPC.h">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectMinion.h">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTile.h">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectGate.h">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectGround.h">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectStone.h">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneIntro.h">
+      <Filter>1_GameModule\SceneManager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>1_GameModule\SceneManager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneIngame.h">
+      <Filter>1_GameModule\SceneManager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>1_GameModule\SceneManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Prev.h">
+      <Filter>0_Prev</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureShader.h">
+      <Filter>1_GameModule\RendererModule\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="LightShader.h">
+      <Filter>1_GameModule\RendererModule\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorShader.h">
+      <Filter>1_GameModule\RendererModule\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="AmbientLightShader.h">
+      <Filter>1_GameModule\RendererModule\Shader</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>2_Entry</Filter>
+    </ClCompile>
+    <ClCompile Include="Direct.cpp">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>1_GameModule</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>2_Entry</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>1_GameModule\Keyboard</Filter>
+    </ClCompile>
+    <ClCompile Include="FBX.cpp">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>1_GameModule\ObjectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectPC.cpp">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectMinion.cpp">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTile.cpp">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>1_GameModule\RendererModule</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectGate.cpp">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectGround.cpp">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectStone.cpp">
+      <Filter>1_GameModule\ObjectManager\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>1_GameModule\SceneManager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneIngame.cpp">
+      <Filter>1_GameModule\SceneManager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneIntro.cpp">
+      <Filter>1_GameModule\SceneManager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>1_GameModule\SceneManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Prev.cpp">
+      <Filter>0_Prev</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureShader.cpp">
+      <Filter>1_GameModule\RendererModule\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="LightShader.cpp">
+      <Filter>1_GameModule\RendererModule\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorShader.cpp">
+      <Filter>1_GameModule\RendererModule\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="AmbientLightShader.cpp">
+      <Filter>1_GameModule\RendererModule\Shader</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="main.html">
+      <Filter>0_Ark</Filter>
+    </None>
+    <None Include="Shader\LightPS.hlsl">
+      <Filter>1_GameModule\HLSL</Filter>
+    </None>
+    <None Include="Shader\LightVS.hlsl">
+      <Filter>1_GameModule\HLSL</Filter>
+    </None>
+    <None Include="Shader\TextureVS.hlsl">
+      <Filter>1_GameModule\HLSL</Filter>
+    </None>
+    <None Include="Shader\TexturePS.hlsl">
+      <Filter>1_GameModule\HLSL</Filter>
+    </None>
+    <None Include="Shader\ColorVS.hlsl">
+      <Filter>1_GameModule\HLSL</Filter>
+    </None>
+    <None Include="Shader\ColorPS.hlsl">
+      <Filter>1_GameModule\HLSL</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="desc.txt">
+      <Filter>0_Ark</Filter>
+    </Text>
+    <Text Include="bluePrint.txt">
+      <Filter>0_Ark</Filter>
+    </Text>
+    <Text Include="problem.txt">
+      <Filter>0_Ark</Filter>
+    </Text>
+    <Text Include="_플랜.txt">
+      <Filter>0_Ark</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\현재문제.PNG">
+      <Filter>0_Ark</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\AmbientLightPS.hlsl">
+      <Filter>1_GameModule\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\AmbientLightVS.hlsl">
+      <Filter>1_GameModule\HLSL</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
