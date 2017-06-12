@@ -31,6 +31,8 @@
 #define MONSTER_HP_STANDARD	50
 #define MONSTER_HP_MASTER	100
 
+#define NEXUS_HP 500
+
 using namespace std;
 using namespace chrono;
 
@@ -53,15 +55,32 @@ struct Object
 	int		id;
 	WCHAR	name[MAX_STR_SIZE];
 	int		HP;
+	int		maxHp;
 	int		type;
 	int		skill;
+
+	bool	isActive;
+};
+
+struct TowerData
+{
+	bool exist;
+	int x;
+	int y;
+
+	int HP;
+	int maxHP;
 };
 
 struct WorldData {
 	SOCKET s;
+	bool exist;
 	bool connected;
 
-	Object ob;
+	unordered_set<int> viewList;
+	mutex vlLock;
+
+	Object obj;
 	OverlappedEx recvOverlap;
 	int packetSize;
 	int previousSize;

@@ -13,24 +13,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="packet">
+      <UniqueIdentifier>{7ec3ea05-8a0b-42b0-b3e1-f10318ec1c92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ErrorDisplay">
+      <UniqueIdentifier>{9f234157-030b-47ab-b3da-8c91c5fc2eb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Server.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="ErrorDisplay.cpp">
+      <Filter>ErrorDisplay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="packet.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="protocol.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Server.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="packet.h">
+      <Filter>packet</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorDisplay.h">
+      <Filter>ErrorDisplay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

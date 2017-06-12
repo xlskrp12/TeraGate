@@ -7,12 +7,19 @@
 #define MAP_WIDTH		200
 #define MAP_HEIGHT		200
 
+#define VIEW_RADIUS		200
+
+#define NUM_THREADS		4
+
 #define MAX_USER		6
 
 #define NPC_START		100
 #define NUM_OF_NPC		3000
 
-#define NUM_OF_OBFECT	2000
+#define TOWER_START		4000
+#define NUM_OF_NEXUS		3
+#define NUM_OF_POWERSPOT	10
+#define NUM_OF_OBJECT	13
 
 #define MY_SERVER_PORT	4000
 
@@ -24,13 +31,14 @@
 
 //클라->서버 
 #define CS_MOUSE_MOVE	1
-#define	CS_MOUSE_ATTACK	2
-#define CS_KEY_Q		3
-#define CS_KEY_W		4
-#define CS_KEY_E		5
+#define CS_UP			2
+#define CS_DOWN			3
+#define CS_LEFT			4
+#define CS_RIGHT		5
 
 #define CS_LOGIN		6
 #define CS_ATTACK		7
+#define CS_SKILL		8
 
 //서버->클라
 #define	SC_POS				1
@@ -53,11 +61,24 @@ struct cs_packet_attack
 	BYTE type;
 };
 
-struct cs_packet_move
-{
+struct cs_packet_up {
 	BYTE size;
 	BYTE type;
-	int goal;
+};
+
+struct cs_packet_down {
+	BYTE size;
+	BYTE type;
+};
+
+struct cs_packet_left {
+	BYTE size;
+	BYTE type;
+};
+
+struct cs_packet_right {
+	BYTE size;
+	BYTE type;
 };
 
 struct sc_packet_pos
