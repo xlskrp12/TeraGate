@@ -12,11 +12,10 @@ void Game::init()
 {
     initWindow();
 
-    _keyboard    = new Keyboard;
-    _renderer = new Renderer;
-    _renderer->init(_hwnd, _rectWindow.right, _rectWindow.bottom);
+    _sceneManager = new SceneManager;
+    _sceneManager->init(_hwnd, _rectWindow.right, _rectWindow.bottom);
 
-    PlaySound(L"Resource/Sound/bgmUntitled", NULL, SND_ASYNC | SND_LOOP);
+    // PlaySound(L"Resource/Sound/bgmUntitled", NULL, SND_ASYNC | SND_LOOP);
 #ifdef _DEBUG
     printf("Game::init()\n");
 #endif
@@ -74,21 +73,22 @@ void Game::initWindow()
         _rectWindow.top    = (GetSystemMetrics(SM_CYSCREEN) - CLIENT_HEIGHT) / 2; 
         _rectWindow.right  = CLIENT_WIDTH;
         _rectWindow.bottom = CLIENT_HEIGHT;
-        _hwnd = CreateWindowEx(WS_EX_APPWINDOW,
-            _appTitle, _appTitle,
-            WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
-            _rectWindow.left, _rectWindow.top,
-            _rectWindow.right, _rectWindow.bottom,
-            NULL, NULL, _hInstance, NULL);
-        
-        // 타이틀바 있게
-        //_hwnd = CreateWindowEx(
-        //    WS_EX_APPWINDOW,
+        // 타이틀바 없게
+        //_hwnd = CreateWindowEx(WS_EX_APPWINDOW,
         //    _appTitle, _appTitle,
-        //    WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
+        //    WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
         //    _rectWindow.left, _rectWindow.top,
         //    _rectWindow.right, _rectWindow.bottom,
-        //    NULL, NULL, _hInstance, NULL);        
+        //    NULL, NULL, _hInstance, NULL);
+        
+        // 타이틀바 있게
+        _hwnd = CreateWindowEx(
+            WS_EX_APPWINDOW,
+            _appTitle, _appTitle,
+            WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
+            _rectWindow.left, _rectWindow.top,
+            _rectWindow.right, _rectWindow.bottom,
+            NULL, NULL, _hInstance, NULL);        
         
     }
     // 윈도우 전위 포커스
@@ -99,13 +99,9 @@ void Game::initWindow()
 }
 void Game::release()
 {
-    if(_keyboard)
-        delete _keyboard;
-    _keyboard = NULL;
-
-    if(_renderer)
-        delete _renderer;
-        _renderer = NULL;
+    if(_sceneManager)
+        delete _sceneManager;
+    _sceneManager = NULL;
 
     releaseWindow();
 }
@@ -137,21 +133,19 @@ void Game::run()
 }
 void Game::render()
 {
-    _renderer->render();
+    _sceneManager->render();
 }
 void Game::update()
 {
-    _renderer->update();
+    _sceneManager->update();
 }
 void Game::proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
     switch (message)
     {
     case WM_KEYDOWN:
-        _keyboard->down(wparam);
         break;
     case WM_KEYUP:
-        _keyboard->up(wparam);
         break;
     case WM_PAINT:
         /*

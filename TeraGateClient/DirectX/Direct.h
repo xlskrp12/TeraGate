@@ -2,13 +2,20 @@
 #include"Prev.h"
 class Direct
 {
-public:
+// 싱글턴
+private:
     Direct();
+    static Direct* _singleton;
+public:
+    static Direct* getSingleton();
+// 메소드
+public:
     void init(HWND hwnd, bool fullscreen, bool vsync, int screenWidth, int screenHeight, float screenDepth, float screenNear);
     void release();
     void clearBuffer(float r, float g, float b, float a);// 뎁스버퍼 클리어 및 지정색상으로 백버퍼 클리어
     void swapchain();                                    // 스왑체인 프레젠트 - 아리가또 땡큐
     //▼ GetSet
+    HWND                 getHWND();
     ID3D11Device*        getDevice();
     ID3D11DeviceContext* getDeviceContext();
     D3DXMATRIX           getMtxProjection();

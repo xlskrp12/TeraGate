@@ -1,7 +1,4 @@
 #pragma once
-#ifdef _DEBUG
-    #pragma comment(linker,"/entry:WinMainCRTStartup /subsystem:console")
-#endif
 #define WIND32_LEAN_AND_MEAN
 #pragma comment(lib, "winmm.lib")// playsound() 사용을 위해 선언
 #pragma comment(lib, "d3d10.lib")
@@ -34,8 +31,8 @@
 #define SRAND_SEED(seed) srand((unsigned)time(NULL)*seed)       //time.h
 #define RANDOM_S(STANDARD, SIZE) (STANDARD-(SIZE/2)+rand()%SIZE)//time.h
 #define RANDOM_M(MIN, MAX) (MIN + rand()%(MAX+1-MIN))           //time.h
-int     RANDOM_E(int exceptSize, int size);
-const bool  FULL_SCREEN   = true;
+int         RANDOM_E(int exceptSize, int size);
+const bool  FULL_SCREEN   = false;
 const bool  VSYNC_ENABLED = true;
 const float SCREEN_DEPTH  = 12000.f; // 이 이상 넘어가게 되면 알아서 컬링컬링 ><
 const float SCREEN_NEAR   = 0.1f;
