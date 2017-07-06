@@ -14,7 +14,6 @@ public://인터페이스
     void render(ID3D11DeviceContext *deviceContext);
     int  getIndexCount();
     ID3D11ShaderResourceView* getTexture();
-    D3DXMATRIX getMtxWorld(D3DXMATRIX);
 protected://멤버함수
     void initFBX(char *fbxFileName);
     void initFBXNode(FbxNode *node);
@@ -24,6 +23,7 @@ protected://멤버함수
     void releaseBuffer();
     void releaseTexture();
     void renderBuffer(ID3D11DeviceContext* deviceContext);
+    FbxAMatrix _matrix;
 protected://타입
     // FBX파일을 읽어 FBXVertex타입으로 저장
     // 몇 개의 버텍스가 있을지 모르니 std::vector, push_back을 이용
@@ -78,6 +78,11 @@ protected://멤버변수
     FbxScene              *_scene;
     FbxNode               *_rootNode;
     std::vector<FBXVertex> _meshData;
+    /*
+    FbxAnimStack* _animationStack;
+    FbxAnimLayer* _animationBaseLayer;
+
+    */
     //▼DirectX변수들
     ID3D11Buffer *_vertexBuffer;
     ID3D11Buffer *_indexBuffer;
