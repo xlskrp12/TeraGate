@@ -2,7 +2,7 @@
 #include "ErrorDisplay.h"
 
 HANDLE hIocp;
-static bool isShutdown = false;
+bool isShutdown = false;
 
 WorldData worldData[NUM_OF_NPC];
 TowerData towerData[NUM_OF_NEXUS + NUM_OF_POWERSPOT];
