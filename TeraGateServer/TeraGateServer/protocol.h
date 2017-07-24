@@ -1,13 +1,13 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#define MAX_BUFF_SIZE	1000
-#define MAX_PACKET_SIZE	1000
+#define MAX_BUFF_SIZE	4000
+#define MAX_PACKET_SIZE	4000
 
 #define MAP_WIDTH		200
 #define MAP_HEIGHT		200
 
-#define VIEW_RADIUS		200
+#define VIEW_RADIUS		20000
 
 #define NUM_THREADS		4
 
@@ -35,6 +35,7 @@
 #define CS_DOWN			3
 #define CS_LEFT			4
 #define CS_RIGHT		5
+//#define CS_PC_MOVE		2
 
 #define CS_LOGIN		6
 #define CS_ATTACK		7
@@ -52,7 +53,6 @@ struct cs_packet_login
 {
 	BYTE size;
 	BYTE type;
-	WCHAR name[MAX_STR_SIZE];
 };
 
 struct cs_packet_attack
@@ -86,9 +86,11 @@ struct sc_packet_pos
 	BYTE size;
 	BYTE type;
 	WORD id;
-	WORD x;
-	WORD y;
 	WORD monsterType;
+	float x;
+	float y;
+	float z;
+	
 };
 
 struct sc_packet_attack 
@@ -103,13 +105,16 @@ struct sc_packet_put_player {
 	BYTE size;
 	BYTE type;
 	WORD id;
-	WORD x;
-	WORD y;
 
 	WORD hp;
 	WORD maxHp;
 	WORD monsterType;
-	WCHAR name[MAX_STR_SIZE];
+
+	float x;
+	float y;
+	float z;
+
+	
 };
 
 struct sc_packet_remove_player {
