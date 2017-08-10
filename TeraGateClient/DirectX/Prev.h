@@ -1,7 +1,4 @@
 #pragma once
-//#ifdef _DEBUG
-    #pragma comment(linker,"/entry:WinMainCRTStartup /subsystem:console")
-//#endif
 #define WIND32_LEAN_AND_MEAN
 #pragma comment(lib, "winmm.lib")// playsound() 사용을 위해 선언
 #pragma comment(lib, "d3d10.lib")
@@ -12,11 +9,6 @@
 //#pragma comment(lib, "D3Dcompiler.lib")
 // #pragma comment(lib, "D3Dcompiler.lib")
 #include<time.h>        // 타이머 사용을 위해 선언
-
-//------------------------------------------------
-#include<WinSock2.h>
-//------------------------------------------------
-
 #include<windows.h>
 #include<stdio.h>       // sprintf() 사용을 위해 선언
 #include<stdlib.h>
@@ -30,22 +22,6 @@
 #include<D3DX11async.h> // CreateVertexShaderFromFile() 함수 헤더인데 왜 아예 안되지..
 #include<d3dcommon.h>
 #include<DXGI.h>
-
-//---------------------------------------------------------------
-#include <malloc.h>
-#include <memory.h>
-#include <tchar.h>
-
-
-#include<WS2tcpip.h>
-#include"..\..\TeraGateServer\protocol.h"
-
-#include"Server.h"
-
-#pragma comment(lib, "ws2_32")
-#pragma comment(lib,"msimg32")
-#pragma warning(disable:4996)
-//---------------------------------------------------------------
 // #include<DirectXMath.h> // XMFLOAT3 구조체 사용가능..하긴 한데 그냥 D3DX10math.h의 D3DXVECTOR3 구조체 쓰자.. 연산자 오버로딩도 이것저것 되있다.
 #define CLIENT_WIDTH  1280
 #define CLIENT_HEIGHT 720
@@ -55,7 +31,7 @@
 #define SRAND_SEED(seed) srand((unsigned)time(NULL)*seed)       //time.h
 #define RANDOM_S(STANDARD, SIZE) (STANDARD-(SIZE/2)+rand()%SIZE)//time.h
 #define RANDOM_M(MIN, MAX) (MIN + rand()%(MAX+1-MIN))           //time.h
-int     RANDOM_E(int exceptSize, int size);
+int         RANDOM_E(int exceptSize, int size);
 const bool  FULL_SCREEN   = false;
 const bool  VSYNC_ENABLED = true;
 const float SCREEN_DEPTH  = 12000.f; // 이 이상 넘어가게 되면 알아서 컬링컬링 ><
@@ -65,5 +41,3 @@ void infoD3DXMATRIX(D3DXMATRIX mtx, char* desc);
 void infoD3DXVECTOR3(D3DXVECTOR3 v);
 void infoD3DXVECTOR3(D3DXVECTOR3 v, char* desc);
 void ifFail(HRESULT hResult);
-
-#define _ServerDef		Server::GetInstance()

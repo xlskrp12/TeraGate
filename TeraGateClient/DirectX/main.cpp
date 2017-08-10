@@ -2,6 +2,13 @@
 #include"Game.h"
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstance, PSTR cmdLine, int cmdShow)
 {
+#ifdef _DEBUG
+    #pragma comment(linker,"/entry:WinMainCRTStartup /subsystem:console")
+    system("mode con lines=50 cols=100");
+    system("color 0A");
+#endif
+    Direct::getSingleton();
+    FBXManager::getSingleton();
     Game::getSingletone()->init();
     //메모리 체크
     {

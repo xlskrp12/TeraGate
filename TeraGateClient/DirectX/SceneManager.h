@@ -1,23 +1,23 @@
 #pragma once
-#include<vector>
 #include"Prev.h"
-#include"Keyboard.h"
-#include"Renderer.h"
+// ¾À
 #include"SceneIngame.h"
 #include"SceneIntro.h"
 class SceneManager
 {
 public:
     SceneManager();
+    SceneManager(const SceneManager&);
     ~SceneManager();
-    void init(Keyboard*, Renderer*);
-    void release();
-    void update();
-    void render();
-private:
-    Keyboard* _keyboard;
-    Renderer* _renderer;
 
-    std::vector<Scene*> _scene;
-    Scene* _currentScene;
+    void init(HWND, int, int);
+    void release();
+    void render();
+    void update();
+public:
+    const static int STATE_INGAME = 0;
+    const static int STATE_INTRO  = 1;
+    const static int STATE_VOLUME = 2;
+private:
+    Scene             *_scene[STATE_VOLUME];
 };

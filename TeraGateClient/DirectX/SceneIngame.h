@@ -10,5 +10,10 @@ public:
     void proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
     void update();
     void render();
+protected:
+    ObjectManager      _objectManager;
+    Camera            *_camera;
+    AmbientLightShader*_shader;
+    Light             *_light;
 };
 
