@@ -1,6 +1,8 @@
-#include "Server.h"
 
+//#include"Prev.h"
+#include"Renderer.h"
 
+Server* Server::instance = nullptr;
 void Server::err_display(char *msg)
 {
 	LPVOID lpMsgBuf;
@@ -43,15 +45,38 @@ void Server::ProcessPacket(char *ptr)
 
 		if (id == g_myid)
 		{
+			player.x = my_packet->x;
+			player.y = my_packet->y;
+			player.z = my_packet->z;
+			player.roty = my_packet->roty;
+			player.exist = true;
 
+			player.hp = my_packet->hp;
+			player.maxHp = my_packet->maxHp;
+			std:: cout << id << "insert" << std::endl;
 		}
 		else if (id < NPC_START)
 		{
-			
+			otherPC[id].x = my_packet->x;
+			otherPC[id].y = my_packet->y;
+			otherPC[id].z = my_packet->z;
+			otherPC[id].roty = my_packet->roty;
+			otherPC[id].exist = true;
+
+			otherPC[id].hp = my_packet->hp;
+			otherPC[id].maxHp = my_packet->maxHp;
+			std::cout << id << "insert" << std::endl;
 		}
 		else
 		{
-			
+			NPC[id - NPC_START].x = my_packet->x;
+			NPC[id - NPC_START].y = my_packet->y;
+			NPC[id - NPC_START].z = my_packet->z;
+			NPC[id - NPC_START].roty = my_packet->roty;
+			NPC[id - NPC_START].exist = true;
+
+			NPC[id - NPC_START].hp = my_packet->hp;
+			NPC[id - NPC_START].maxHp = my_packet->maxHp;
 		}
 	}
 	break;
@@ -59,6 +84,30 @@ void Server::ProcessPacket(char *ptr)
 	case SC_POS:
 	{
 		sc_packet_pos *my_packet = reinterpret_cast<sc_packet_pos *>(ptr);
+		int other_id = my_packet->id;
+		if (other_id == g_myid)
+		{
+			player.x = my_packet->x;
+			player.y = my_packet->y;
+			player.z = my_packet->z;
+			player.roty = my_packet->roty;
+			std::cout << player.x << " , " << player.z << std::endl;
+		}
+		else if (other_id < NPC_START)
+		{
+			otherPC[other_id].x = my_packet->x;
+			otherPC[other_id].y = my_packet->y;
+			otherPC[other_id].z = my_packet->z;
+			otherPC[other_id].roty = my_packet->roty;
+		}
+		else
+		{
+			NPC[other_id - NPC_START].x = my_packet->x;
+			NPC[other_id - NPC_START].y = my_packet->y;
+			NPC[other_id - NPC_START].z = my_packet->z;
+			NPC[other_id - NPC_START].roty = my_packet->roty;
+			NPC[other_id - NPC_START].type = my_packet->monsterType;
+		}
 		
 	}
 	break;
@@ -66,6 +115,19 @@ void Server::ProcessPacket(char *ptr)
 	case SC_REMOVE_PLAYER:
 	{
 		sc_packet_remove_player *my_packet = reinterpret_cast<sc_packet_remove_player *>(ptr);
+		int other_id = my_packet->id;
+		if (other_id == g_myid)
+		{
+			player.exist = false;
+		}
+		else if (other_id < NPC_START)
+		{
+			otherPC[other_id].exist = false;
+		}
+		else
+		{
+			NPC[other_id - NPC_START].exist = false;
+		}
 		
 	}
 	break;
@@ -116,12 +178,14 @@ void Server::ReadPacket(SOCKET sock)
 	}
 }
 
-void Server::Init(HWND _hwnd)
+void Server::Init()
 {
 	int retval;
 
 	WSADATA wsa;
-	WSAStartup(MAKEWORD(2, 2), &wsa);
+	if(0 != WSAStartup(MAKEWORD(2, 2), &wsa))
+		exit(-1);
+
 	g_mysocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);
 
 	SOCKADDR_IN serveraddr;
@@ -132,14 +196,29 @@ void Server::Init(HWND _hwnd)
 
 	retval = WSAConnect(g_mysocket, (SOCKADDR *)&serveraddr, sizeof(serveraddr), NULL, NULL, NULL, NULL);
 
-	WSAAsyncSelect(g_mysocket, _hwnd, WM_SOCKET, FD_CLOSE | FD_READ);
+	std::cout << std::endl;
+	std::cout << "Connected" << std::endl;
+
+	
+
+}
+
+void Server::Sync(HWND _hwnd)
+{
+	int retval;
+
+	retval = WSAAsyncSelect(g_mysocket, _hwnd, WM_SOCKET, FD_CLOSE | FD_READ);
+	if (retval == SOCKET_ERROR)
+	{
+		err_quit("WSAAsyncSelect()");
+	}
 
 	send_wsabuf.buf = send_buffer;
 	send_wsabuf.len = BUF_SIZE;
 	recv_wsabuf.buf = recv_buffer;
 	recv_wsabuf.len = BUF_SIZE;
-
 }
+
 
 void Server::Release()
 {

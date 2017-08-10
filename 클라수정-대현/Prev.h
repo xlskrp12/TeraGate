@@ -1,7 +1,7 @@
 #pragma once
-#ifdef _DEBUG
+//#ifdef _DEBUG
     #pragma comment(linker,"/entry:WinMainCRTStartup /subsystem:console")
-#endif
+//#endif
 #define WIND32_LEAN_AND_MEAN
 #pragma comment(lib, "winmm.lib")// playsound() 사용을 위해 선언
 #pragma comment(lib, "d3d10.lib")
@@ -13,9 +13,9 @@
 // #pragma comment(lib, "D3Dcompiler.lib")
 #include<time.h>        // 타이머 사용을 위해 선언
 
-//---------------------------------------------------------------
+//------------------------------------------------
 #include<WinSock2.h>
-//---------------------------------------------------------------
+//------------------------------------------------
 
 #include<windows.h>
 #include<stdio.h>       // sprintf() 사용을 위해 선언
@@ -36,12 +36,16 @@
 #include <memory.h>
 #include <tchar.h>
 
+
 #include<WS2tcpip.h>
-
-
 #include"..\..\TeraGateServer\protocol.h"
-//---------------------------------------------------------------
 
+#include"Server.h"
+
+#pragma comment(lib, "ws2_32")
+#pragma comment(lib,"msimg32")
+#pragma warning(disable:4996)
+//---------------------------------------------------------------
 // #include<DirectXMath.h> // XMFLOAT3 구조체 사용가능..하긴 한데 그냥 D3DX10math.h의 D3DXVECTOR3 구조체 쓰자.. 연산자 오버로딩도 이것저것 되있다.
 #define CLIENT_WIDTH  1280
 #define CLIENT_HEIGHT 720
@@ -61,3 +65,5 @@ void infoD3DXMATRIX(D3DXMATRIX mtx, char* desc);
 void infoD3DXVECTOR3(D3DXVECTOR3 v);
 void infoD3DXVECTOR3(D3DXVECTOR3 v, char* desc);
 void ifFail(HRESULT hResult);
+
+#define _ServerDef		Server::GetInstance()
