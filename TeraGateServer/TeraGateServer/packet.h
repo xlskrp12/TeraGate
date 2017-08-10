@@ -89,7 +89,6 @@ struct TowerData
 
 struct WorldData {
 	SOCKET s;
-	bool exist;
 	bool connected;
 
 	unordered_set<int> viewList;

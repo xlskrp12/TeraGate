@@ -7,6 +7,7 @@ Object::Object()
     _rot.x = 0;
     _rot.y = 0;
     _rot.z = 0;
+	_exist = false;
 }
 Object::~Object()
 {

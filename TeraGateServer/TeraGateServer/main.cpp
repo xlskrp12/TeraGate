@@ -4,8 +4,7 @@
 HANDLE hIocp;
 bool isShutdown = false;
 
-WorldData worldData[MAX_USER];
-WorldData MonsterData[NUM_OF_NPC];
+WorldData worldData[NUM_OF_NPC];
 TowerData towerData[NUM_OF_NEXUS + NUM_OF_POWERSPOT];
 
 bool viewRange(int a, int b)
@@ -50,29 +49,32 @@ void Initialize()
 	
 	for (auto i = NPC_START; i < NUM_OF_NPC; ++i)
 	{
-		MonsterData[i].connected = true;
-		MonsterData[i].obj.isActive = false;
+		worldData[i].connected = true;
+		worldData[i].obj.isActive = false;
 		
 		srand(time(NULL));
-		MonsterData[i].obj.x = rand() % MAP_WIDTH;
-		MonsterData[i].obj.y = rand() % MAP_HEIGHT;
+		worldData[i].obj.x = 80.f;
+		worldData[i].obj.y = 0.f;
+		worldData[i].obj.z = 0.f;
+
+		worldData[i].obj.roty = 0.f;
 
 		//기본 몬스터
 		// 마스터 몬스터용 조건 추가 필요
-		MonsterData[i].obj.HP = MONSTER_HP_STANDARD;
-		MonsterData[i].obj.maxHp = MONSTER_HP_STANDARD;
+		worldData[i].obj.HP = MONSTER_HP_STANDARD;
+		worldData[i].obj.maxHp = MONSTER_HP_STANDARD;
 	}
 
 	for (auto i = TOWER_START; i < NUM_OF_OBJECT + TOWER_START; ++i)
 	{
-		towerData[i].exist = true;
-		towerData[i].x = rand() % MAP_WIDTH*10;
-		towerData[i].y = rand() % MAP_HEIGHT*10;
+		towerData[i- TOWER_START].exist = true;
+		towerData[i- TOWER_START].x = rand() % MAP_WIDTH*10;
+		towerData[i- TOWER_START].z = rand() % MAP_HEIGHT*10;
 
 		if (i < TOWER_START + NUM_OF_NEXUS)
 		{
-			towerData[i].HP = NEXUS_HP;
-			towerData[i].maxHP = NEXUS_HP;
+			towerData[i- TOWER_START].HP = NEXUS_HP;
+			towerData[i- TOWER_START].maxHP = NEXUS_HP;
 		}
 	}
 
@@ -114,6 +116,8 @@ void SendPutPlayerPacket(int id, int object)
 	packet.y = worldData[object].obj.y;
 	packet.z = worldData[object].obj.z;
 
+	packet.roty = worldData[object].obj.roty;
+
 	packet.hp = worldData[object].obj.HP;
 	packet.maxHp = worldData[object].obj.maxHp;
 
@@ -152,38 +156,32 @@ void ProcessPacket(int id, unsigned char buf[])
 
 		case CS_UP:
 			roty = 0;
-			x += 2.f * sin(DEGREE_TO_RADIAN(roty));
-			z += 2.f * cos(DEGREE_TO_RADIAN(roty));
+			x += 5.f * sin(DEGREE_TO_RADIAN(roty));
+			z += 5.f * cos(DEGREE_TO_RADIAN(roty));
 			cout << x << " , " << z << endl;
 			break;
 
 		case CS_DOWN:
 			roty = -180;
-			x += 2.f * sin(DEGREE_TO_RADIAN(roty));
-			z += 2.f * cos(DEGREE_TO_RADIAN(roty));
+			x += 5.f * sin(DEGREE_TO_RADIAN(roty));
+			z += 5.f * cos(DEGREE_TO_RADIAN(roty));
 			cout << x << " , " << z << endl;
 			break;
 
 		case CS_LEFT:
 			roty = 90;
-			x += 2.f * sin(DEGREE_TO_RADIAN(roty));
-			z += 2.f * cos(DEGREE_TO_RADIAN(roty));
+			x += 5.f * sin(DEGREE_TO_RADIAN(roty));
+			z += 5.f * cos(DEGREE_TO_RADIAN(roty));
 			cout << x << " , " << z << endl;
 			break;
 
 		case CS_RIGHT:
 			roty = -90;
-			x += 2.f * sin(DEGREE_TO_RADIAN(roty));
-			z += 2.f * cos(DEGREE_TO_RADIAN(roty));
+			x += 5.f * sin(DEGREE_TO_RADIAN(roty));
+			z += 5.f * cos(DEGREE_TO_RADIAN(roty));
 			cout << x << " , " << z << endl;
 			break;
 
-		/*case CS_PC_MOVE:
-			cout << "recv mov pac" << endl;
-			x += 2.f * sin(DEGREE_TO_RADIAN(roty));
-			z += 2.f * cos(DEGREE_TO_RADIAN(roty));
-			break;
-			*/
 		case CS_ATTACK:
 			break;
 
@@ -222,15 +220,16 @@ void ProcessPacket(int id, unsigned char buf[])
 	movPacket.x = x;
 	movPacket.y = y;
 	movPacket.z = z;
+	movPacket.roty = roty;
 
 	SendPacket(id, reinterpret_cast<unsigned char *>(&movPacket));
 	cout << id << "mov" << endl;
 
 	unordered_set<int> newList;
-	for (auto i = 0; i < MAX_USER; ++i)
+	for (auto i = 0; i < NUM_OF_NPC; ++i)
 	{
 
-		if (false == worldData[i].exist)
+		if (false == worldData[i].connected)
 			continue;
 		if (i == id)
 			continue;
@@ -240,18 +239,6 @@ void ProcessPacket(int id, unsigned char buf[])
 		newList.insert(i);
 	}
 
-	for (auto i = NPC_START; i < NUM_OF_NPC; ++i)
-	{
-
-		if (false == worldData[i].exist)
-			continue;
-		if (i == id)
-			continue;
-		if (false == viewRange(i, id))
-			continue;
-
-		newList.insert(i);
-	}
 
 	for (auto i : newList)
 	{
@@ -292,6 +279,7 @@ void ProcessPacket(int id, unsigned char buf[])
 			movPacket.x = worldData[i].obj.x;
 			movPacket.y = worldData[i].obj.y;
 			movPacket.z = worldData[i].obj.z;
+			movPacket.roty = worldData[i].obj.roty;
 
 			SendPacket(id, reinterpret_cast<unsigned char *>(&movPacket));
 
@@ -503,6 +491,7 @@ void AcceptThreadStart()
 		worldData[newID].obj.x = 0.f;
 		worldData[newID].obj.y = 0.f;
 		worldData[newID].obj.z = 0.f;
+		worldData[newID].obj.roty = -180;
 		worldData[newID].packetSize = 0;
 		worldData[newID].previousSize = 0;
 		memset(&worldData[newID].recvOverlap.originalOverlapped, 0,
@@ -522,13 +511,14 @@ void AcceptThreadStart()
 		enterPacket.x = worldData[newID].obj.x;
 		enterPacket.y = worldData[newID].obj.y;
 		enterPacket.z = worldData[newID].obj.z;
+		enterPacket.roty = worldData[newID].obj.roty;
 
 		SendPacket(newID, reinterpret_cast<unsigned char *>(&enterPacket));
-		worldData[newID].exist = true;
+		//worldData[newID].exist = true;
 
 		for (auto i = 0; i < MAX_USER; ++i)
 		{
-			if (false == worldData[i].exist)
+			if (false == worldData[i].connected)
 				continue;
 			if (i == newID)
 				continue;
@@ -542,9 +532,9 @@ void AcceptThreadStart()
 			SendPacket(i, reinterpret_cast<unsigned char *>(&enterPacket));
 		}
 
-		for (auto i = 0; i < MAX_USER; ++i)
+		for (auto i = NPC_START; i < NUM_OF_NPC; ++i)
 		{
-			if (false == worldData[i].exist)
+			if (false == worldData[i].connected)
 				continue;
 			if (i == newID)
 				continue;
@@ -558,19 +548,38 @@ void AcceptThreadStart()
 			enterPacket.id = i;
 			enterPacket.x = worldData[i].obj.x;
 			enterPacket.y = worldData[i].obj.y;
+			enterPacket.z = worldData[i].obj.z;
+
+			enterPacket.roty = worldData[i].obj.roty;
+
+			enterPacket.hp = worldData[i].obj.HP;
+
 			SendPacket(newID, reinterpret_cast<unsigned char *>(&enterPacket));
 		}
 
-		//worldData[newID].exist = true;
-		/*sc_packet_pos firstPacket;
-		firstPacket.id = newID;
-		firstPacket.x = worldData[newID].obj.x;
-		firstPacket.y = worldData[newID].obj.y;
-		firstPacket.z = worldData[newID].obj.z;
-		firstPacket.type = SC_POS;
-		firstPacket.size = sizeof(firstPacket);
+		for (auto i = 0; i < MAX_USER; ++i)
+		{
+			if (false == worldData[i].connected)
+				continue;
+			if (i == newID)
+				continue;
+			if (false == viewRange(i, newID))
+				continue;
 
-		SendPacket(newID, reinterpret_cast<unsigned char *>(&firstPacket));*/
+			worldData[newID].vlLock.lock();
+			worldData[newID].viewList.insert(i);
+			worldData[newID].vlLock.unlock();
+
+			enterPacket.id = i;
+			enterPacket.x = worldData[i].obj.x;
+			enterPacket.y = worldData[i].obj.y;
+			enterPacket.z = worldData[i].obj.z;
+			SendPacket(newID, reinterpret_cast<unsigned char *>(&enterPacket));
+		}
+
+		worldData[newID].connected = true;
+
+
 		DWORD flags = 0;
 
 		int retval = WSARecv(newClient, &worldData[newID].recvOverlap.wsabuf, 1,
@@ -603,7 +612,7 @@ int main()
 	}
 
 	thread acceptThread{ AcceptThreadStart };
-
+	
 	while (false == isShutdown)
 	{
 		Sleep(1000);

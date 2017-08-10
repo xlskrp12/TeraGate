@@ -1,5 +1,6 @@
 #pragma once
 #include"Prev.h"
+//#include"Server.h"
 class Object
 {
 public://인터페이스
@@ -29,9 +30,12 @@ public://인터페이스
     //가상 인터페이스
     virtual void update();
     virtual void setArkDes(D3DXVECTOR3 ark, D3DXVECTOR3 des); // 초기위치, 목적지 좌표를 결정
+
+	bool _exist;
 protected:
     D3DXVECTOR3 _pos;
     D3DXVECTOR3 _des;
     D3DXVECTOR3 _rot;
+	
 };
 

@@ -10,28 +10,28 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Object.cpp">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClCompile>
     <ClCompile Include="ObjectGate.cpp">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClCompile>
     <ClCompile Include="ObjectGround.cpp">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClCompile>
     <ClCompile Include="ObjectMinion.cpp">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClCompile>
     <ClCompile Include="ObjectPC.cpp">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClCompile>
     <ClCompile Include="ObjectStone.cpp">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTile.cpp">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClCompile>
     <ClCompile Include="ObjectManager.cpp">
-      <Filter>02_GameModule\ObjectManager</Filter>
+      <Filter>03_GameModule\ObjectManager</Filter>
     </ClCompile>
     <ClCompile Include="Prev.cpp">
       <Filter>00_Prev</Filter>
@@ -61,19 +61,25 @@
       <Filter>01_RendererModule\Texture</Filter>
     </ClCompile>
     <ClCompile Include="SceneIngame.cpp">
-      <Filter>02_GameModule\Scene</Filter>
+      <Filter>03_GameModule\Scene</Filter>
     </ClCompile>
     <ClCompile Include="SceneIntro.cpp">
-      <Filter>02_GameModule\Scene</Filter>
+      <Filter>03_GameModule\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
-      <Filter>02_GameModule\Scene</Filter>
+      <Filter>03_GameModule\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>03_GameModule\SceneManager</Filter>
     </ClCompile>
     <ClCompile Include="Direct.cpp">
-      <Filter>01_RendererModule\Direct%28Singleton%29</Filter>
+      <Filter>01_RendererModule\Direct</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>02_Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Keyboard.cpp">
-      <Filter>02_GameModule\Keyboard</Filter>
+      <Filter>03_GameModule\Keyboard</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>01_RendererModule\Light</Filter>
@@ -82,39 +88,36 @@
       <Filter>99_Entry</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
-      <Filter>04_Game%28Singleton%29</Filter>
+      <Filter>04_Game</Filter>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>02_GameModule\SceneManager</Filter>
-    </ClCompile>
-    <ClCompile Include="FBXManager.cpp">
-      <Filter>01_RendererModule\FBXManager%28Singleton%29</Filter>
+    <ClCompile Include="Server.cpp">
+      <Filter>00_Prev</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTile.h">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClInclude>
     <ClInclude Include="ObjectGate.h">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClInclude>
     <ClInclude Include="ObjectGround.h">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClInclude>
     <ClInclude Include="ObjectMinion.h">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClInclude>
     <ClInclude Include="ObjectPC.h">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClInclude>
     <ClInclude Include="ObjectStone.h">
-      <Filter>02_GameModule\Object</Filter>
+      <Filter>03_GameModule\Object</Filter>
     </ClInclude>
     <ClInclude Include="ObjectManager.h">
-      <Filter>02_GameModule\ObjectManager</Filter>
+      <Filter>03_GameModule\ObjectManager</Filter>
     </ClInclude>
     <ClInclude Include="Prev.h">
       <Filter>00_Prev</Filter>
@@ -144,31 +147,34 @@
       <Filter>01_RendererModule\Texture</Filter>
     </ClInclude>
     <ClInclude Include="SceneIntro.h">
-      <Filter>02_GameModule\Scene</Filter>
+      <Filter>03_GameModule\Scene</Filter>
     </ClInclude>
     <ClInclude Include="SceneIngame.h">
-      <Filter>02_GameModule\Scene</Filter>
+      <Filter>03_GameModule\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
-      <Filter>02_GameModule\Scene</Filter>
+      <Filter>03_GameModule\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>03_GameModule\SceneManager</Filter>
     </ClInclude>
     <ClInclude Include="Direct.h">
-      <Filter>01_RendererModule\Direct%28Singleton%29</Filter>
+      <Filter>01_RendererModule\Direct</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>02_Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Keyboard.h">
-      <Filter>02_GameModule\Keyboard</Filter>
+      <Filter>03_GameModule\Keyboard</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>01_RendererModule\Light</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
-      <Filter>04_Game%28Singleton%29</Filter>
+      <Filter>04_Game</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>02_GameModule\SceneManager</Filter>
-    </ClInclude>
-    <ClInclude Include="FBXManager.h">
-      <Filter>01_RendererModule\FBXManager%28Singleton%29</Filter>
+    <ClInclude Include="Server.h">
+      <Filter>00_Prev</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -209,6 +215,30 @@
     <Filter Include="99_Entry">
       <UniqueIdentifier>{751c9416-4ee9-4f50-84d3-f4992e0b2896}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03_GameModule">
+      <UniqueIdentifier>{34e9a967-5251-4a9b-842c-cad7063ead10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_GameModule\ObjectManager">
+      <UniqueIdentifier>{651fd145-ee4f-40d1-a65b-3a4be7c9e3f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_GameModule\Object">
+      <UniqueIdentifier>{26df2541-1772-46a2-b5fa-a8ec03554512}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_GameModule\SceneManager">
+      <UniqueIdentifier>{13393655-b479-4981-9e04-b3b03f4cc51d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_GameModule\Scene">
+      <UniqueIdentifier>{33b603cc-50f3-44ba-a677-592defbb301d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03_GameModule\Keyboard">
+      <UniqueIdentifier>{a8f31b83-032c-4bcd-8f2c-d9290c20d278}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02_Renderer">
+      <UniqueIdentifier>{38f75546-d993-4712-b9bc-cf9482adcc46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04_Game">
+      <UniqueIdentifier>{303055e5-a93b-4a99-939e-0489524f32b6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01_RendererModule">
       <UniqueIdentifier>{54f1e755-bd1b-4a24-bc8d-674562003bda}</UniqueIdentifier>
     </Filter>
@@ -230,35 +260,11 @@
     <Filter Include="01_RendererModule\Texture">
       <UniqueIdentifier>{9a8c3013-608a-41b9-bdd0-b7d921a599b2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01_RendererModule\Light">
-      <UniqueIdentifier>{fb4d8206-8673-46c9-8355-912991a7ce01}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02_GameModule">
-      <UniqueIdentifier>{34e9a967-5251-4a9b-842c-cad7063ead10}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02_GameModule\ObjectManager">
-      <UniqueIdentifier>{651fd145-ee4f-40d1-a65b-3a4be7c9e3f9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02_GameModule\Object">
-      <UniqueIdentifier>{26df2541-1772-46a2-b5fa-a8ec03554512}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02_GameModule\SceneManager">
-      <UniqueIdentifier>{13393655-b479-4981-9e04-b3b03f4cc51d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02_GameModule\Scene">
-      <UniqueIdentifier>{33b603cc-50f3-44ba-a677-592defbb301d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02_GameModule\Keyboard">
-      <UniqueIdentifier>{a8f31b83-032c-4bcd-8f2c-d9290c20d278}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01_RendererModule\Direct%28Singleton%29">
+    <Filter Include="01_RendererModule\Direct">
       <UniqueIdentifier>{c3dca943-7481-4b32-b13e-e06f28d4839a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01_RendererModule\FBXManager%28Singleton%29">
-      <UniqueIdentifier>{a15f1bb4-fa9b-4ef7-af3e-f7e25dc78e76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04_Game%28Singleton%29">
-      <UniqueIdentifier>{303055e5-a93b-4a99-939e-0489524f32b6}</UniqueIdentifier>
+    <Filter Include="01_RendererModule\Light">
+      <UniqueIdentifier>{fb4d8206-8673-46c9-8355-912991a7ce01}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

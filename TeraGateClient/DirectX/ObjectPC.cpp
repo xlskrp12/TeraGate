@@ -35,7 +35,7 @@ void ObjectPC::update()
 
     // 복합키, 단독키 입력시 방향처리
     // ↗
-    if ((GetKeyState(VK_NUMPAD8) & 0x8000) && (GetKeyState(VK_NUMPAD6) & 0x8000))
+    /*if ((GetKeyState(VK_NUMPAD8) & 0x8000) && (GetKeyState(VK_NUMPAD6) & 0x8000))
         _rot.y = 45;
     // ↖
     else if ((GetKeyState(VK_NUMPAD8) & 0x8000) && (GetKeyState(VK_NUMPAD4) & 0x8000))
@@ -54,7 +54,7 @@ void ObjectPC::update()
     else if (GetKeyState(VK_NUMPAD4) & 0x8000)
         _rot.y = -90;
     else if (GetKeyState(VK_NUMPAD6) & 0x8000)
-        _rot.y = 90;
+        _rot.y = 90;*/
     // 어쨌든 이동키를 하나라도 누른다면 이동
     if ((GetKeyState(VK_NUMPAD8) & 0x8000) || (GetKeyState(VK_NUMPAD6) & 0x8000) || (GetKeyState(VK_NUMPAD2) & 0x8000) || (GetKeyState(VK_NUMPAD4) & 0x8000))
     {
@@ -67,8 +67,28 @@ void ObjectPC::update()
         }
         else
         {
-            _pos.x += movement * sin(DEGREE_TO_RADIAN(_rot.y));
-            _pos.z += movement * cos(DEGREE_TO_RADIAN(_rot.y));
+          /* _pos.x += movement * sin(DEGREE_TO_RADIAN(_rot.y));
+            _pos.z += movement * cos(DEGREE_TO_RADIAN(_rot.y));*/
+			_rot.y = _ServerDef->player.roty;
+			_pos.x = _ServerDef->player.x;
+			_pos.z = _ServerDef->player.z;
+			//std::cout << _pos.x << " , " << _pos.z << std::endl;
+
+			//---------------------------------------------------------------
+			/*cs_packet_down *my_packet = reinterpret_cast<cs_packet_down *>(_server->send_buffer);
+			my_packet->size = sizeof(my_packet);
+			_server->send_wsabuf.len = sizeof(my_packet);
+
+			DWORD iobyte;
+
+			int retval = WSASend(_server->g_mysocket, &_server->send_wsabuf, 1, &iobyte, 0, NULL, NULL);
+			if (retval)
+			{
+				int errCode = WSAGetLastError();
+				printf("Error while sending packet [%d]", errCode);
+			}
+			*/
+			//---------------------------------------------------------------
         }
 
 

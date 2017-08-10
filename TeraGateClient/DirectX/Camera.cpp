@@ -13,7 +13,6 @@ Camera::Camera(const Camera& camera)
 }
 Camera::~Camera()
 {
-
 }
 void Camera::setPos(D3DXVECTOR3 pos)
 {

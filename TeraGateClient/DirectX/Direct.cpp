@@ -1,5 +1,4 @@
 #include"Direct.h"
-//▼싱글톤
 Direct::Direct()
 {
     _swapchain          = NULL;
@@ -10,14 +9,6 @@ Direct::Direct()
     _depthStencilView   = NULL;
     _rasterizerState    = NULL;
 }
-Direct* Direct::_singleton = NULL;
-Direct* Direct::getSingleton()
-{
-    if(NULL == _singleton)
-        _singleton = new Direct();
-    return _singleton;
-}
-//▼메소드
 void Direct::init(HWND hwnd, bool fullscreen, bool vsync, int screenWidth, int screenHeight, float screenDepth, float screenNear)
 {
     _hwnd         = hwnd;
@@ -100,10 +91,6 @@ void Direct::swapchain()
     else
         // 되는대로 출력
         _swapchain->Present(0, 0);
-}
-HWND Direct::getHWND()
-{
-    return _hwnd;
 }
 ID3D11Device* Direct::getDevice()
 {

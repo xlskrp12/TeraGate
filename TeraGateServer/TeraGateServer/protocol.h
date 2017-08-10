@@ -14,7 +14,7 @@
 #define MAX_USER		6
 
 #define NPC_START		100
-#define NUM_OF_NPC		3000
+#define NUM_OF_NPC		300
 
 #define TOWER_START		4000
 #define NUM_OF_NEXUS		3
@@ -91,6 +91,7 @@ struct sc_packet_pos
 	float y;
 	float z;
 	
+	float roty;
 };
 
 struct sc_packet_attack 
@@ -114,7 +115,7 @@ struct sc_packet_put_player {
 	float y;
 	float z;
 
-	
+	float roty;
 };
 
 struct sc_packet_remove_player {

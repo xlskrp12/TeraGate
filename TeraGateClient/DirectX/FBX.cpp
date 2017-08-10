@@ -59,6 +59,10 @@ ID3D11ShaderResourceView* FBX::getTexture()
 {
     return _texture->getTexture();
 }
+D3DXMATRIX FBX::getMtxWorld(D3DXMATRIX mtxWorld)
+{
+    return mtxWorld;
+}
 void FBX::initFBX(char* fbxFileName)
 {
     bool result;
@@ -150,8 +154,8 @@ void FBX::initBuffer(ID3D11Device* device)
     for (int i = 0; i < _meshData.size(); i++, it++)
     {
         //정점배열 초기화
-        vertex[i]._pos    = it->_pos;
-        vertex[i]._uv     = it->_uv;
+        vertex[i]._pos = it->_pos;
+        vertex[i]._uv = it->_uv;
         vertex[i]._normal = it->_normal;
         //인덱스배열 초기화
         index[i] = i;
