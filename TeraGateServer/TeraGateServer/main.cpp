@@ -1,11 +1,30 @@
 #include "packet.h"
 #include "ErrorDisplay.h"
+#include "timer.h"
 
 HANDLE hIocp;
 bool isShutdown = false;
 
 WorldData worldData[NUM_OF_NPC];
 TowerData towerData[NUM_OF_NEXUS + NUM_OF_POWERSPOT];
+
+priority_queue<eventType, vector<eventType>, mycomp> evtQueue, evtDB;
+mutex eqLock, dbLock;
+
+int RANDOM_E(int exceptSize, int size)
+{
+	int loopSeed = 0;
+	int result = RANDOM_S(0, size);
+	if (abs(result) < exceptSize)
+	{
+		int extra = exceptSize - abs(result);
+		if (result<0)
+			result -= abs(extra);
+		else if (0<result)
+			result += abs(extra);
+	}
+	return result + RANDOM_S(0, 100);
+}
 
 bool viewRange(int a, int b)
 {
@@ -38,7 +57,7 @@ void Initialize()
 
 		worldData[i].obj.x = 0.f;
 		worldData[i].obj.y = 0.f;
-		worldData[i].obj.z = 0.f;
+		worldData[i].obj.z = -100.f;
 		
 		worldData[i].recvOverlap.wsabuf.buf =
 			reinterpret_cast<CHAR *>(worldData[i].recvOverlap.iocpBuffer);
@@ -52,10 +71,13 @@ void Initialize()
 		worldData[i].connected = true;
 		worldData[i].obj.isActive = false;
 		
-		srand(time(NULL));
-		worldData[i].obj.x = 80.f;
+		SRAND_SEED(i * 7);
+		double radius = RANDOM_E(1800, 2000);
+		double radian = DEGREE_TO_RADIAN(RANDOM_M(0, 360));
+
+		worldData[i].obj.x = radius*cos(radian);
 		worldData[i].obj.y = 0.f;
-		worldData[i].obj.z = 0.f;
+		worldData[i].obj.z = radius*sin(radian);
 
 		worldData[i].obj.roty = 0.f;
 
@@ -68,8 +90,8 @@ void Initialize()
 	for (auto i = TOWER_START; i < NUM_OF_OBJECT + TOWER_START; ++i)
 	{
 		towerData[i- TOWER_START].exist = true;
-		towerData[i- TOWER_START].x = rand() % MAP_WIDTH*10;
-		towerData[i- TOWER_START].z = rand() % MAP_HEIGHT*10;
+		towerData[i- TOWER_START].x = 0.f;
+		towerData[i- TOWER_START].z = 0.f;
 
 		if (i < TOWER_START + NUM_OF_NEXUS)
 		{
@@ -136,6 +158,128 @@ void SendRemovePlayerPacket(int id, int object)
 	SendPacket(id, reinterpret_cast<unsigned char *>(&packet));
 }
 
+void LoginPlayer(int id)
+{
+	worldData[id].obj.x = 0.f;
+	worldData[id].obj.y = 0.f;
+	worldData[id].obj.z = -100.f;
+	worldData[id].obj.roty = -180;
+	worldData[id].packetSize = 0;
+	worldData[id].previousSize = 0;
+	memset(&worldData[id].recvOverlap.originalOverlapped, 0,
+		sizeof(worldData[id].recvOverlap.originalOverlapped));
+
+
+	worldData[id].vlLock.lock();
+	worldData[id].viewList.clear();
+	worldData[id].vlLock.unlock();
+
+	sc_packet_put_player enterPacket;
+	enterPacket.id = id;
+	enterPacket.size = sizeof(enterPacket);
+	enterPacket.type = SC_PUT_PLAYER;
+	enterPacket.x = worldData[id].obj.x;
+	enterPacket.y = worldData[id].obj.y;
+	enterPacket.z = worldData[id].obj.z;
+	enterPacket.roty = worldData[id].obj.roty;
+
+	SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
+
+	for (auto i = 0; i < MAX_USER; ++i)
+	{
+		if (false == worldData[i].connected)
+			continue;
+		if (i == id)
+			continue;
+		if (false == viewRange(i, id))
+			continue;
+
+		worldData[i].vlLock.lock();
+		worldData[i].viewList.insert(id);
+		worldData[i].vlLock.unlock();
+
+		SendPacket(i, reinterpret_cast<unsigned char *>(&enterPacket));
+	}
+
+	for (auto i = NPC_START; i < NUM_OF_NPC; ++i)
+	{
+		if (false == worldData[i].connected)
+			continue;
+		if (i == id)
+			continue;
+		if (false == viewRange(i, id))
+			continue;
+
+		worldData[id].vlLock.lock();
+		worldData[id].viewList.insert(i);
+		worldData[id].vlLock.unlock();
+
+		enterPacket.id = i;
+		enterPacket.x = worldData[i].obj.x;
+		enterPacket.y = worldData[i].obj.y;
+		enterPacket.z = worldData[i].obj.z;
+
+		enterPacket.roty = worldData[i].obj.roty;
+
+		enterPacket.hp = worldData[i].obj.HP;
+
+		SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
+	}
+
+	/*for (auto i = 0; i < MAX_USER; ++i)
+	{
+		if (false == worldData[i].connected)
+			continue;
+		if (i == newID)
+			continue;
+		if (false == viewRange(i, newID))
+			continue;
+
+		worldData[newID].vlLock.lock();
+		worldData[newID].viewList.insert(i);
+		worldData[newID].vlLock.unlock();
+
+		enterPacket.id = i;
+		enterPacket.x = worldData[i].obj.x;
+		enterPacket.y = worldData[i].obj.y;
+		enterPacket.z = worldData[i].obj.z;
+		SendPacket(newID, reinterpret_cast<unsigned char *>(&enterPacket));
+	}*/
+
+	worldData[id].connected = true;
+}
+
+void DBThreadStart()
+{
+	while (1)
+	{
+		Sleep(1);
+		dbLock.lock();
+		while (false == evtDB.empty())
+		{
+			if (evtDB.top().wakeUpTime > GetTickCount())
+				break;
+			eventType ev = evtDB.top();
+			evtDB.pop();
+			dbLock.unlock();
+
+			switch (ev.eventID)
+			{
+				case DB_SELECT_NAME:
+				{
+					LoginPlayer(ev.objectID);
+				}
+				break;
+
+				default:
+					break;
+			}
+			dbLock.lock();
+		}
+		dbLock.unlock();
+	}
+}
+
 void ProcessPacket(int id, unsigned char buf[])
 {
 	float x = worldData[id].obj.x;
@@ -144,43 +288,92 @@ void ProcessPacket(int id, unsigned char buf[])
 
 	float roty = worldData[id].obj.roty;
 
+	float movement = 5.f;
+
 	switch (buf[1])
 	{
 		case CS_LOGIN:
 		{
+			cs_packet_login *my_packet = reinterpret_cast<cs_packet_login *>(buf);
+
+			evtDB.push(eventType{ id,GetTickCount(),DB_SELECT_NAME });
 		}
 		break;
 
 		case CS_MOUSE_MOVE:
 			break;
 
-		case CS_UP:
-			roty = 0;
-			x += 5.f * sin(DEGREE_TO_RADIAN(roty));
-			z += 5.f * cos(DEGREE_TO_RADIAN(roty));
+		case CS_RIGHT_UP:
+		{
+			roty = 45;
+			x += movement * sin(DEGREE_TO_RADIAN(roty));
+			z += movement * cos(DEGREE_TO_RADIAN(roty));
 			cout << x << " , " << z << endl;
-			break;
+		}
+		break;
+
+		case CS_LEFT_UP:
+		{
+			roty = -45;
+			x += movement * sin(DEGREE_TO_RADIAN(roty));
+			z += movement * cos(DEGREE_TO_RADIAN(roty));
+			cout << x << " , " << z << endl;
+		}
+		break;
+
+		case CS_RIGHT_DOWN:
+		{
+			roty = 135;
+			x += movement * sin(DEGREE_TO_RADIAN(roty));
+			z += movement * cos(DEGREE_TO_RADIAN(roty));
+			cout << x << " , " << z << endl;
+		}
+		break;
+
+		case CS_LEFT_DOWN:
+		{
+			roty = -135;
+			x += movement * sin(DEGREE_TO_RADIAN(roty));
+			z += movement * cos(DEGREE_TO_RADIAN(roty));
+			cout << x << " , " << z << endl;
+		}
+		break;
+
+		case CS_UP:
+		{
+			roty = 0;
+			x += movement * sin(DEGREE_TO_RADIAN(roty));
+			z += movement * cos(DEGREE_TO_RADIAN(roty));
+			cout << x << " , " << z << endl;
+		}
+		break;
 
 		case CS_DOWN:
+		{
 			roty = -180;
-			x += 5.f * sin(DEGREE_TO_RADIAN(roty));
-			z += 5.f * cos(DEGREE_TO_RADIAN(roty));
+			x += movement * sin(DEGREE_TO_RADIAN(roty));
+			z += movement * cos(DEGREE_TO_RADIAN(roty));
 			cout << x << " , " << z << endl;
-			break;
+		}
+		break;
 
 		case CS_LEFT:
+		{
 			roty = 90;
-			x += 5.f * sin(DEGREE_TO_RADIAN(roty));
-			z += 5.f * cos(DEGREE_TO_RADIAN(roty));
+			x += movement * sin(DEGREE_TO_RADIAN(roty));
+			z += movement * cos(DEGREE_TO_RADIAN(roty));
 			cout << x << " , " << z << endl;
-			break;
+		}
+		break;
 
 		case CS_RIGHT:
+		{
 			roty = -90;
-			x += 5.f * sin(DEGREE_TO_RADIAN(roty));
-			z += 5.f * cos(DEGREE_TO_RADIAN(roty));
+			x += movement * sin(DEGREE_TO_RADIAN(roty));
+			z += movement * cos(DEGREE_TO_RADIAN(roty));
 			cout << x << " , " << z << endl;
-			break;
+		}
+		break;
 
 		case CS_ATTACK:
 			break;
@@ -193,17 +386,11 @@ void ProcessPacket(int id, unsigned char buf[])
 			while (true);
 	}
 
-	//cout << buf[1] << endl;
-
-	/*if (y < 0)
-		y = 0;
-	if (y > MAP_HEIGHT*10 - 50)
-		y = MAP_HEIGHT * 10 - 50;
-	if (x < 0)
-		x = 0;
-	if (x > MAP_WIDTH * 10 - 50)
-		x = MAP_WIDTH * 10 - 50;*/
-
+	if (pow((int)MAP_SIZE, 2) <= pow(x, 2) + pow(z, 2))
+	{
+		x -= movement * sin(DEGREE_TO_RADIAN(roty));
+		z -= movement * cos(DEGREE_TO_RADIAN(roty));
+	}
 	
 
 	worldData[id].obj.x = x;
@@ -488,9 +675,9 @@ void AcceptThreadStart()
 		}
 
 		worldData[newID].s = newClient;
-		worldData[newID].obj.x = 0.f;
+		/*worldData[newID].obj.x = 0.f;
 		worldData[newID].obj.y = 0.f;
-		worldData[newID].obj.z = 0.f;
+		worldData[newID].obj.z = -100.f;
 		worldData[newID].obj.roty = -180;
 		worldData[newID].packetSize = 0;
 		worldData[newID].previousSize = 0;
@@ -577,8 +764,10 @@ void AcceptThreadStart()
 			SendPacket(newID, reinterpret_cast<unsigned char *>(&enterPacket));
 		}
 
-		worldData[newID].connected = true;
+		worldData[newID].connected = true;*/
 
+		CreateIoCompletionPort(reinterpret_cast<HANDLE>(newClient),
+			hIocp, newID, 0);
 
 		DWORD flags = 0;
 
@@ -603,6 +792,7 @@ int main()
 	wcout.imbue(std::locale("kor"));
 
 	vector<thread *> workerThread;
+	Timer timer;
 
 	Initialize();
 
@@ -612,10 +802,12 @@ int main()
 	}
 
 	thread acceptThread{ AcceptThreadStart };
+
+	thread DBThread{ DBThreadStart };
 	
 	while (false == isShutdown)
 	{
-		Sleep(1000);
+		if (timer.isOn())	{	}
 	}
 
 	for (auto th : workerThread)
@@ -623,7 +815,10 @@ int main()
 		th->join();
 		delete th;
 	}
+
 	acceptThread.join();
+
+	DBThread.join();
 
 	cleanUp();
 
