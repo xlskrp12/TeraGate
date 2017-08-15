@@ -6,25 +6,10 @@ HANDLE hIocp;
 bool isShutdown = false;
 
 WorldData worldData[NUM_OF_NPC];
-TowerData towerData[NUM_OF_NEXUS + NUM_OF_POWERSPOT];
+TowerData towerData[NUM_OF_NEXUS + NUM_OF_GATE];
 
 priority_queue<eventType, vector<eventType>, mycomp> evtQueue, evtDB;
 mutex eqLock, dbLock;
-
-int RANDOM_E(int exceptSize, int size)
-{
-	int loopSeed = 0;
-	int result = RANDOM_S(0, size);
-	if (abs(result) < exceptSize)
-	{
-		int extra = exceptSize - abs(result);
-		if (result<0)
-			result -= abs(extra);
-		else if (0<result)
-			result += abs(extra);
-	}
-	return result + RANDOM_S(0, 100);
-}
 
 bool viewRange(int a, int b)
 {
@@ -57,29 +42,29 @@ void Initialize()
 
 		worldData[i].obj.x = 0.f;
 		worldData[i].obj.y = 0.f;
-		worldData[i].obj.z = -100.f;
+		worldData[i].obj.z = -10000.f;
 		
 		worldData[i].recvOverlap.wsabuf.buf =
 			reinterpret_cast<CHAR *>(worldData[i].recvOverlap.iocpBuffer);
 
 		worldData[i].recvOverlap.wsabuf.len =
 			sizeof(worldData[i].recvOverlap.iocpBuffer);
+
 	}
 	
-	for (auto i = NPC_START; i < NUM_OF_NPC; ++i)
+	for (auto i = NPC_START; i < NUM_OF_NPC + NUM_NPC_PLAYER; ++i)
 	{
 		worldData[i].connected = true;
 		worldData[i].obj.isActive = false;
 		
-		SRAND_SEED(i * 7);
-		double radius = RANDOM_E(1800, 2000);
+		double radius = 400 + RANDOM_M(100, 600);
 		double radian = DEGREE_TO_RADIAN(RANDOM_M(0, 360));
 
 		worldData[i].obj.x = radius*cos(radian);
 		worldData[i].obj.y = 0.f;
 		worldData[i].obj.z = radius*sin(radian);
 
-		worldData[i].obj.roty = 0.f;
+		worldData[i].obj.roty = (RANDOM_M(0, 360));
 
 		//기본 몬스터
 		// 마스터 몬스터용 조건 추가 필요
@@ -87,11 +72,109 @@ void Initialize()
 		worldData[i].obj.maxHp = MONSTER_HP_STANDARD;
 	}
 
-	for (auto i = TOWER_START; i < NUM_OF_OBJECT + TOWER_START; ++i)
+	int radius = 3000;
+
+	for (auto i = TOWER_START; i < NUM_OF_TOWER + TOWER_START; ++i)
 	{
 		towerData[i- TOWER_START].exist = true;
-		towerData[i- TOWER_START].x = 0.f;
-		towerData[i- TOWER_START].z = 0.f;
+		// NPC Team 
+		if (0 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = 0.f;
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = 0.f;
+			towerData[i - TOWER_START].team = TEAM_N;
+		}
+		else if (1 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(90));
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(90));
+			towerData[i - TOWER_START].team = TEAM_N;
+		}
+		else if (2 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(90)) / 2;
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(90)) / 2;
+			towerData[i - TOWER_START].team = TEAM_N;
+		}
+		else if (3 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(50));
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(50));
+			towerData[i - TOWER_START].team = TEAM_N;
+		}
+		else if (4 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(130));
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(130));
+			towerData[i - TOWER_START].team = TEAM_N;
+		}
+
+
+		//Left Team
+		else if (5 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(210));
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(210));
+			towerData[i - TOWER_START].team = TEAM_L;
+		}
+		else if (6 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(210)) / 2;
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(210)) / 2;
+			towerData[i - TOWER_START].team = TEAM_L;
+		}
+		else if (7 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(170));
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(170));
+			towerData[i - TOWER_START].team = TEAM_L;
+		}
+		else if (8 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(250));
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(250));
+			towerData[i - TOWER_START].team = TEAM_L;
+		}
+
+		//Right Team
+		else if (9 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(-30));
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(-30));
+			towerData[i - TOWER_START].team = TEAM_R;
+		}
+		else if (10 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(-30)) / 2;
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(-30)) / 2;
+			towerData[i - TOWER_START].team = TEAM_R;
+		}
+		else if (11 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(10));
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(10));
+			towerData[i - TOWER_START].team = TEAM_R;
+		}
+		else if (12 == i - TOWER_START)
+		{
+			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(-70));
+			towerData[i - TOWER_START].y = 0.f;
+			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(-70));
+			towerData[i - TOWER_START].team = TEAM_R;
+		}
+
 
 		if (i < TOWER_START + NUM_OF_NEXUS)
 		{
@@ -162,10 +245,13 @@ void LoginPlayer(int id)
 {
 	worldData[id].obj.x = 0.f;
 	worldData[id].obj.y = 0.f;
-	worldData[id].obj.z = -100.f;
-	worldData[id].obj.roty = -180;
+	worldData[id].obj.z = -200.f;
+	worldData[id].obj.roty = 0;
+	worldData[id].obj.HP = PLAYER_HP;
+
 	worldData[id].packetSize = 0;
 	worldData[id].previousSize = 0;
+	
 	memset(&worldData[id].recvOverlap.originalOverlapped, 0,
 		sizeof(worldData[id].recvOverlap.originalOverlapped));
 
@@ -182,6 +268,7 @@ void LoginPlayer(int id)
 	enterPacket.y = worldData[id].obj.y;
 	enterPacket.z = worldData[id].obj.z;
 	enterPacket.roty = worldData[id].obj.roty;
+	enterPacket.hp = worldData[id].obj.HP;
 
 	SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
 
@@ -198,10 +285,12 @@ void LoginPlayer(int id)
 		worldData[i].viewList.insert(id);
 		worldData[i].vlLock.unlock();
 
+		
+
 		SendPacket(i, reinterpret_cast<unsigned char *>(&enterPacket));
 	}
 
-	for (auto i = NPC_START; i < NUM_OF_NPC; ++i)
+	for (auto i = NPC_START; i < NUM_OF_NPC + NUM_NPC_PLAYER; ++i)
 	{
 		if (false == worldData[i].connected)
 			continue;
@@ -226,28 +315,61 @@ void LoginPlayer(int id)
 		SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
 	}
 
-	/*for (auto i = 0; i < MAX_USER; ++i)
+	for (auto i = TOWER_START; i < NUM_OF_TOWER + TOWER_START; ++i)
+	{
+		if (i == id)
+			continue;
+
+		enterPacket.id = i;
+		enterPacket.x = towerData[i - TOWER_START].x;
+		enterPacket.y = towerData[i - TOWER_START].y;
+		enterPacket.z = towerData[i - TOWER_START].z;
+
+		enterPacket.hp = towerData[i - TOWER_START].HP;
+
+		SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
+	}
+
+	for (auto i = 0; i < MAX_USER; ++i)
 	{
 		if (false == worldData[i].connected)
 			continue;
-		if (i == newID)
+		if (i == id)
 			continue;
-		if (false == viewRange(i, newID))
+		if (false == viewRange(i, id))
 			continue;
 
-		worldData[newID].vlLock.lock();
-		worldData[newID].viewList.insert(i);
-		worldData[newID].vlLock.unlock();
+		worldData[id].vlLock.lock();
+		worldData[id].viewList.insert(i);
+		worldData[id].vlLock.unlock();
 
 		enterPacket.id = i;
 		enterPacket.x = worldData[i].obj.x;
 		enterPacket.y = worldData[i].obj.y;
 		enterPacket.z = worldData[i].obj.z;
-		SendPacket(newID, reinterpret_cast<unsigned char *>(&enterPacket));
-	}*/
+		enterPacket.hp = worldData[i].obj.HP;
+		SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
+	}
 
-	worldData[id].connected = true;
+	//worldData[id].connected = true;
 }
+
+/*bool collisionCheck(int id)
+{
+	D3DXVECTOR3 aPosBeforeUpdate;//자연스럽게 회전시키기 위해 업데이트 이전 a오브젝트 좌표를 받는다. 얘가 없으면 정면충돌할 때 오브젝트가 180도 반대로 회전하는 경우가 생겨 되게 부자연스럽게 보이는 경우가 있따.
+	D3DXVECTOR3 aPos;
+	D3DXVECTOR3 bPos;
+	D3DXVECTOR3 aPosAfterUpdate; //업데이트 이후 좌표를 받는다.
+	float distance;
+	float sizeDistance;
+	float collisionDistance;
+	float rotation;
+
+	for (auto a = 0; a < sizeof(worldData); a++)
+	{
+
+	}
+}*/
 
 void DBThreadStart()
 {
@@ -397,6 +519,15 @@ void ProcessPacket(int id, unsigned char buf[])
 	worldData[id].obj.y = y;
 	worldData[id].obj.z = z;
 
+	if (CS_UP == buf[1] || CS_DOWN == buf[1])
+	{
+		roty += 90;
+	}
+	else if (CS_LEFT == buf[1] || CS_RIGHT == buf[1])
+	{
+		roty -= 90;
+	}
+
 	worldData[id].obj.roty = roty;
 
 
@@ -413,7 +544,7 @@ void ProcessPacket(int id, unsigned char buf[])
 	cout << id << "mov" << endl;
 
 	unordered_set<int> newList;
-	for (auto i = 0; i < NUM_OF_NPC; ++i)
+	for (auto i = 0; i < NUM_OF_NPC + NUM_NPC_PLAYER; ++i)
 	{
 
 		if (false == worldData[i].connected)

@@ -43,14 +43,6 @@
 
 #define NEXUS_HP 500
 
-#define DEGREE_TO_RADIAN(degree) ((degree) * 0.0174532925f)
-#define RADIAN_TO_DEGREE(radian) ((radian) * 57.295779513f)
-#define SRAND() srand((unsigned)time(NULL))                            //time.h
-#define SRAND_SEED(seed) srand((unsigned)time(NULL)*(seed))            //time.h
-#define RANDOM_S(STANDARD, SIZE) ((STANDARD)-((SIZE)/2)+rand()%(SIZE)) //time.h
-#define RANDOM_M(MIN, MAX) ((MIN) + rand()%((MAX)+1-(MIN)))            //time.h
-int         RANDOM_E(int exceptSize, int size);
-
 #define DB_CONNECT		1
 #define DB_SELECT_NAME	2
 #define DB_UPDATE		3
@@ -80,7 +72,7 @@ struct Object
 	int		id;
 	int		HP;
 	int		maxHp;
-	int		type;
+	int		team;
 	int		skill;
 
 	bool	isActive;
@@ -95,6 +87,7 @@ struct TowerData
 
 	int HP;
 	int maxHP;
+	int team;
 };
 
 struct WorldData {

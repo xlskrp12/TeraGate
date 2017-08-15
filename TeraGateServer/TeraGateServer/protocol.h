@@ -4,8 +4,15 @@
 #define MAX_BUFF_SIZE	4000
 #define MAX_PACKET_SIZE	4000
 
-//#define MAP_WIDTH		200
-//#define MAP_HEIGHT		200
+#define CLIENT_WIDTH  1280//1960//1280
+#define CLIENT_HEIGHT 720//1080//720
+// 매크로로 계산할 때는 괄호를 꼭 챙겨주자..
+#define DEGREE_TO_RADIAN(degree) ((degree) * 0.0174532925f)
+#define RADIAN_TO_DEGREE(radian) ((radian) * 57.295779513f)
+#define SRAND() srand((unsigned)time(NULL))                            //time.h
+#define SRAND_SEED(seed) srand((unsigned)time(NULL)*(seed))            //time.h
+#define RANDOM_S(STANDARD, SIZE) ((STANDARD)-((SIZE)/2)+rand()%(SIZE)) //time.h
+#define RANDOM_M(MIN, MAX) ((MIN) + rand()%((MAX)+1-(MIN)))            //time.h
 
 #define MAP_SIZE		2000
 
@@ -15,13 +22,16 @@
 
 #define MAX_USER		6
 
-#define NPC_START		100
-#define NUM_OF_NPC		220
+//#define NPC_PLAYER_START	10
+#define NUM_NPC_PLAYER		4
 
-#define TOWER_START		4000
-#define NUM_OF_NEXUS		3
-#define NUM_OF_POWERSPOT	10
-#define NUM_OF_OBJECT	13
+#define NPC_START		100
+#define NUM_OF_NPC		190
+
+#define TOWER_START		1000
+#define NUM_OF_NEXUS	3
+#define NUM_OF_GATE		10
+#define NUM_OF_TOWER	13
 
 #define MY_SERVER_PORT	4000
 
@@ -51,6 +61,11 @@
 #define SC_PUT_PLAYER		2
 #define SC_REMOVE_PLAYER	3
 #define SC_ATTACK			4
+
+//팀 구분
+#define TEAM_L			1	//Left
+#define TEAM_R			2	//Right
+#define TEAM_N			3	//NPC
 
 #pragma pack(push,1)
 
