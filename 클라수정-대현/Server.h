@@ -30,6 +30,18 @@ struct Player {
 
 };
 
+struct TowerData
+{
+	bool exist;
+	float x;
+	float y;
+	float z;
+
+	int HP;
+	int maxHP;
+	int team;
+};
+
 /*struct Object {
 	bool exist;
 	float x;
@@ -75,6 +87,8 @@ public:
 	Player player;
 	Player otherPC[MAX_USER];
 	Player NPC[NUM_OF_NPC];
+
+	TowerData towerData[NUM_OF_TOWER];
 	
 	WSABUF	send_wsabuf;
 	char 	send_buffer[BUF_SIZE];

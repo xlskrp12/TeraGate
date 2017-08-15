@@ -1,9 +1,7 @@
 #pragma once
 #include"Prev.h"
 #include"SceneManager.h"
-//---------------------------------------------------------------
-//#include"Server.h"
-//---------------------------------------------------------------
+#include"GameTimer.h"
 class Game{
 //¡å ½Ì±ÛÅæ °ü·Ã 
 // ½Ì±ÛÅæ¾²´Â ÀÌÀ¯´Â WinProc()¿¡¼­ getSingletone()ÇÒ¶ó±Ã.
@@ -21,10 +19,6 @@ public:
     void release();
     void run();
     void proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
-
-	//---------------------------------------------------------------
-	//Server *_server;
-	//---------------------------------------------------------------
 private:
     void initWindow();
     void releaseWindow();
@@ -33,15 +27,16 @@ private:
 //¡å ¸â¹öº¯¼ö 
 private:
     // ÀÎÇ², ±×·¡ÇÈ
-    Keyboard* _keyboard    = NULL;
-    Renderer* _renderer    = NULL;
     SceneManager* _sceneManager = NULL;
     // À©µµ¿ì °ü·Ã
     LPCWSTR   _appTitle    = L"TeraGate";
     HINSTANCE _hInstance   = GetModuleHandle(NULL);
     HWND      _hwnd        = NULL;
     RECT      _rectWindow;
+    GameTimer _timer;
 
-	
+	//--------------------------------------------------------------------------
+	Keyboard* _keyboard;
+	//--------------------------------------------------------------------------
 };
 LRESULT CALLBACK WinProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);

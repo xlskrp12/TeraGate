@@ -10,27 +10,27 @@ Game* Game::getSingletone()
 Game::Game(){}
 void Game::init()
 {
-
-	//-----------------------------server 추가----------------------------------
-	//_server = new Server;
-	//---------------------------------------------------------------
-
     initWindow();
 
-    _keyboard     = new Keyboard;
-    _renderer     = new Renderer;
-    _sceneManager = new SceneManager;
-    _renderer->init(_hwnd, _rectWindow.right, _rectWindow.bottom);
-    _sceneManager->init(_keyboard, _renderer);
+	//--------------------------------------------------------------------------
+	_keyboard = new Keyboard;
+	//--------------------------------------------------------------------------
 
-    PlaySound(L"Resource/Sound/bgmUntitled", NULL, SND_ASYNC | SND_LOOP);
+    _sceneManager = new SceneManager;
+	//_sceneManager->init(_hwnd, _rectWindow.right, _rectWindow.bottom);
+
+	//--------------------------------------------------------------------------
+    _sceneManager->init(_hwnd, _rectWindow.right, _rectWindow.bottom, _keyboard);
+	//--------------------------------------------------------------------------
+
+    // 브금 bgm 배경음
+    // PlaySound(L"Resource/Sound/bgmUntitled", NULL, SND_ASYNC | SND_LOOP);
 #ifdef _DEBUG
     printf("Game::init()\n");
 #endif
 }
 void Game::initWindow()
 {
-
 	//-----------------------------server 추가----------------------------------
 	printf("서버 ip 주소를 입력하시오: ");
 	scanf("%s", _ServerDef->SERVERIP);
@@ -38,8 +38,8 @@ void Game::initWindow()
 	_wsetlocale(LC_ALL, L"korean");
 	std::wcout.imbue(std::locale("kor"));
 
-	
-	
+
+
 	//---------------------------------------------------------------
 
     WNDCLASSEX   window;
@@ -92,6 +92,7 @@ void Game::initWindow()
         _rectWindow.top    = (GetSystemMetrics(SM_CYSCREEN) - CLIENT_HEIGHT) / 2; 
         _rectWindow.right  = CLIENT_WIDTH;
         _rectWindow.bottom = CLIENT_HEIGHT;
+        // 타이틀바 없게
         //_hwnd = CreateWindowEx(WS_EX_APPWINDOW,
         //    _appTitle, _appTitle,
         //    WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP,
@@ -110,7 +111,10 @@ void Game::initWindow()
         
     }
 
+	//------------------------------------------------------------
 	main_window_handle = _hwnd;
+	//------------------------------------------------------------
+
 
     // 윈도우 전위 포커스
     ShowWindow(_hwnd, SW_SHOW);
@@ -120,21 +124,16 @@ void Game::initWindow()
 
 	//---------hwnd가 생성된 다음에 해야 함------------------------
 	_ServerDef->Init();
-	//------------------------------------------------------------
-	//---------hwnd가 생성된 다음에 해야 함------------------------
+
 	if (nullptr != main_window_handle)
 		_ServerDef->Sync(main_window_handle);
 	//------------------------------------------------------------
 }
 void Game::release()
 {
-    if(_keyboard)
-        delete _keyboard;
-    _keyboard = NULL;
-
-    if(_renderer)
-        delete _renderer;
-    _renderer = NULL;
+	if (_keyboard)
+		delete _keyboard;
+	_keyboard = NULL;
 
     if(_sceneManager)
         delete _sceneManager;
@@ -143,8 +142,6 @@ void Game::release()
 	//-----------------------------server 추가----------------------------------
 	if (_ServerDef)
 		delete _ServerDef;
-	//_server = NULL;
-
 	//---------------------------------------------------------------
 
     releaseWindow();
@@ -159,8 +156,6 @@ void Game::releaseWindow()
 }
 void Game::run()
 {
-	
-
     MSG  msg;
     bool isRunning = true;
     ZeroMemory(&msg, sizeof(MSG));
@@ -173,106 +168,105 @@ void Game::run()
         }
         if (msg.message == WM_QUIT)
             isRunning = false;
-
-
-		for (int i = 0; i < MAX_USER; i++)
-		{
-			if (true == _ServerDef->player.exist)
-			{
-				_renderer->playerObject[i]->_exist = true;
-			}
-			if (true == _ServerDef->otherPC[i].exist)
-			{
-				_renderer->playerObject[i]->_exist = true;
-				_renderer->playerObject[i]->setPos(_ServerDef->otherPC[i].x, 
-					_ServerDef->otherPC[i].y, _ServerDef->otherPC[i].z);
-				_renderer->playerObject[i]->setRot(0, _ServerDef->otherPC[i].roty, 0);
-				//std::cout << i << " exist" << std::endl;
-			}
-		}
-
-		for (int i = 0; i < NUM_OF_NPC - NPC_START; i++)
-		{
-			if (true == _ServerDef->NPC[i].exist)
-			{
-				_renderer->NPCObject[i]->_exist = true;
-				_renderer->NPCObject[i]->setPos(_ServerDef->NPC[i].x, 
-					_ServerDef->NPC[i].y, _ServerDef->NPC[i].z);
-				_renderer->NPCObject[i]->setRot(0, _ServerDef->NPC[i].roty, 0);
-			}
-		}
-        render();
         update();
+        render();
     }
 }
 void Game::render()
 {
     _sceneManager->render();
+
+
+
+
+    //▼타이머로 윈도우 타이틀 갱신
+    _timer.render();
+    if(0.3334f <= _timer.getTime()) // 0.3334초에 한 번씩 윈도우 타이틀 갱신, 타이머 리셋
+    {
+        char  mBuffer[100];
+        WCHAR wBuffer[100];
+        sprintf_s(mBuffer, sizeof(mBuffer), "%ls    FPS %.2f    LPS %.2f    PlayTime %.0fs", _appTitle, _timer.getRenderFPS(), _timer.getLPS(), _timer.getRuntime());
+        MultiByteToWideChar(CP_ACP, NULL, mBuffer, -1, wBuffer, sizeof(wBuffer));
+        ::SetWindowText(_hwnd, wBuffer);
+        _timer.reset();
+    }
 }
 void Game::update()
 {
-    _sceneManager->update();
+    if(_timer.isGoingUpdate())
+    {
+        _timer.update();
+        _sceneManager->update();
+    }
 }
 void Game::proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
     switch (message)
     {
-    case WM_KEYDOWN:
+		//---------------------------------------------------------------
+	case WM_KEYDOWN:
 	{
 		_keyboard->down(wparam);
-		/*switch (wparam)
-		{
-			case VK_NUMPAD8:
-			case VK_NUMPAD4:
-			case VK_NUMPAD6:
-			case VK_NUMPAD2:
-				cs_packet_down *my_packet = reinterpret_cast<cs_packet_down *>(_server->send_buffer);
-				my_packet->size = sizeof(my_packet);
-				_server->send_wsabuf.len = sizeof(my_packet);
-				my_packet->type = CS_PC_MOVE;
 
-				DWORD iobyte;
-
-				int retval = WSASend(_server->g_mysocket, &_server->send_wsabuf, 1, &iobyte, 0, NULL, NULL);
-				if (retval)
-				{
-					int errCode = WSAGetLastError();
-					printf("Error while sending packet [%d]", errCode);
-				}
-				std::cout << "push num" << std::endl;
-				break;
-		}*/
-
+		int w = 0;
 		int x = 0;
+		int y = 0;
 		int z = 0;
 
-		if (wparam == VK_NUMPAD4)
-			x += 1;
-		if (wparam == VK_NUMPAD6)
-			x -= 1;
 
-		if (wparam == VK_NUMPAD8)
+
+		//if ((GetKeyState(VK_UP) & 0x8000) && (GetKeyState(VK_RIGHT) & 0x8000))
+		if ((VK_UP == wparam && VK_RIGHT == wparam))
+			w += 1;
+		// ↖
+		//else if ((GetKeyState(VK_UP) & 0x8000) && (GetKeyState(VK_LEFT) & 0x8000))
+		else if ((VK_UP == wparam && VK_LEFT == wparam))
+			w -= 1;
+		// ↘
+		//else if ((GetKeyState(VK_DOWN) & 0x8000) && (GetKeyState(VK_RIGHT) & 0x8000))
+		else if ((VK_DOWN == wparam && VK_RIGHT == wparam))
+			y += 1;
+		// ↙
+		//else if ((GetKeyState(VK_DOWN) & 0x8000) && (GetKeyState(VK_LEFT) & 0x8000))
+		else if ((VK_DOWN == wparam && VK_LEFT == wparam))
+			y -= 1;
+
+		else if (VK_UP == wparam)
 			z += 1;
-		if (wparam == VK_NUMPAD2)
+		else if (VK_DOWN == wparam)
 			z -= 1;
+		else if (VK_LEFT == wparam)
+			x += 1;
+		else if (VK_RIGHT == wparam)
+			x -= 1;
 
 		cs_packet_up *my_packet = reinterpret_cast<cs_packet_up *>(_ServerDef->send_buffer);
 		my_packet->size = sizeof(my_packet);
 		_ServerDef->send_wsabuf.len = sizeof(my_packet);
 
 		DWORD iobyte;
-		if (0 != x)
+
+		if (0 != w)
 		{
-			if (1 == x)
-			{
-				my_packet->type = CS_RIGHT;
-				std::cout << "push num6" << std::endl;
-			}
+			if (1 == w)
+				my_packet->type = CS_RIGHT_UP;
 			else
+				my_packet->type = CS_LEFT_UP;
+
+			int retval = WSASend(_ServerDef->g_mysocket, &_ServerDef->send_wsabuf, 1, &iobyte, 0, NULL, NULL);
+			if (retval)
 			{
-				my_packet->type = CS_LEFT;
-				std::cout << "push num4" << std::endl;
+				int errCode = WSAGetLastError();
+				printf("Error while sending packet [%d]", errCode);
 			}
+		}
+
+		if (0 != y)
+		{
+			if (1 == y)
+				my_packet->type = CS_RIGHT_DOWN;
+			else
+				my_packet->type = CS_LEFT_DOWN;
 
 			int retval = WSASend(_ServerDef->g_mysocket, &_ServerDef->send_wsabuf, 1, &iobyte, 0, NULL, NULL);
 			if (retval)
@@ -285,15 +279,24 @@ void Game::proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 		if (0 != z)
 		{
 			if (1 == z)
-			{
 				my_packet->type = CS_UP;
-				std::cout << "push num8" << std::endl;
-			}
 			else
-			{
 				my_packet->type = CS_DOWN;
-				std::cout << "push num2" << std::endl;
+
+			int retval = WSASend(_ServerDef->g_mysocket, &_ServerDef->send_wsabuf, 1, &iobyte, 0, NULL, NULL);
+			if (retval)
+			{
+				int errCode = WSAGetLastError();
+				printf("Error while sending packet [%d]", errCode);
 			}
+		}
+
+		if (0 != x)
+		{
+			if (1 == x)
+				my_packet->type = CS_RIGHT;
+			else
+				my_packet->type = CS_LEFT;
 
 			int retval = WSASend(_ServerDef->g_mysocket, &_ServerDef->send_wsabuf, 1, &iobyte, 0, NULL, NULL);
 			if (retval)
@@ -304,12 +307,18 @@ void Game::proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 		}
 
 
-		
 	}
-        break;
+	break;
+	//---------------------------------------------------------------
+
+
     case WM_KEYUP:
-        _keyboard->up(wparam);
+		//---------------------------------------------------------------
+		_keyboard->down(wparam);
+		//---------------------------------------------------------------
         break;
+
+
     case WM_PAINT:
         /*
             PAINTSTRUCT ps;
@@ -318,42 +327,7 @@ void Game::proc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
             Rectangle(hdc, 0, 0, 100, 100);
             EndPaint(hwnd, &ps);
         */
-		/*for (int i = 0; i < MAX_USER; i++)
-		{
-			if(i==g_myid)
-				_renderer->playerObject[i]->setPos(_ServerDef->player.x, _ServerDef->player.y, _ServerDef->player.z);
-		}*/
         break;
-
-	/*case WM_SOCKET:
-	{
-		if (WSAGETSELECTERROR(lparam))
-		{
-			{
-				closesocket((SOCKET)wparam);
-				exit(-1);
-			}
-			break;
-		}
-
-		switch (WSAGETSELECTEVENT(lparam))
-		{
-			case FD_READ:
-			{
-				_server->ReadPacket((SOCKET)wparam);
-				std::cout << "read" << std::endl;
-			}
-			break;
-			case FD_CLOSE:
-			{
-				closesocket((SOCKET)wparam);
-				exit(-1);
-			}
-			break;
-		}
-	}
-	break;*/
-
     default:
         break;
     }
@@ -363,7 +337,6 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
     Game::getSingletone()->proc(hwnd, message, wparam, lparam);
     switch (message)
     {
-	
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
@@ -371,6 +344,7 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
         PostQuitMessage(0);
         return 0;
 
+	//---------------------------------------------------------------
 	case WM_SOCKET:
 	{
 		if (WSAGETSELECTERROR(lparam))
@@ -399,6 +373,8 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 		}
 	}
 	return 0;
+
+	//---------------------------------------------------------------
 
     default:
         return DefWindowProc(hwnd, message, wparam, lparam);

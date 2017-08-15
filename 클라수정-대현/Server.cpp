@@ -1,6 +1,7 @@
 
 //#include"Prev.h"
-#include"Renderer.h"
+//#include"Renderer.h"
+#include"SceneManager.h"
 
 Server* Server::instance = nullptr;
 void Server::err_display(char *msg)
@@ -53,7 +54,7 @@ void Server::ProcessPacket(char *ptr)
 
 			player.hp = my_packet->hp;
 			player.maxHp = my_packet->maxHp;
-			std:: cout << id << "insert" << std::endl;
+			std:: cout << "player" << " insert" << std::endl;
 		}
 		else if (id < NPC_START)
 		{
@@ -64,10 +65,9 @@ void Server::ProcessPacket(char *ptr)
 			otherPC[id].exist = true;
 
 			otherPC[id].hp = my_packet->hp;
-			otherPC[id].maxHp = my_packet->maxHp;
 			std::cout << id << "insert" << std::endl;
 		}
-		else
+		else if(id < TOWER_START)
 		{
 			NPC[id - NPC_START].x = my_packet->x;
 			NPC[id - NPC_START].y = my_packet->y;
@@ -76,7 +76,15 @@ void Server::ProcessPacket(char *ptr)
 			NPC[id - NPC_START].exist = true;
 
 			NPC[id - NPC_START].hp = my_packet->hp;
-			NPC[id - NPC_START].maxHp = my_packet->maxHp;
+		}
+		else
+		{
+			towerData[id - TOWER_START].x = my_packet->x;
+			towerData[id - TOWER_START].y = my_packet->y;
+			towerData[id - TOWER_START].z = my_packet->z;
+			towerData[id - TOWER_START].exist = true;
+
+			towerData[id - TOWER_START].HP = my_packet->hp;
 		}
 	}
 	break;
@@ -91,7 +99,7 @@ void Server::ProcessPacket(char *ptr)
 			player.y = my_packet->y;
 			player.z = my_packet->z;
 			player.roty = my_packet->roty;
-			std::cout << player.x << " , " << player.z << std::endl;
+			//std::cout << player.x << " , " << player.z << std::endl;
 		}
 		else if (other_id < NPC_START)
 		{
@@ -124,11 +132,14 @@ void Server::ProcessPacket(char *ptr)
 		{
 			otherPC[other_id].exist = false;
 		}
-		else
+		else if(other_id < TOWER_START)
 		{
 			NPC[other_id - NPC_START].exist = false;
 		}
-		
+		else
+		{
+			towerData[other_id - TOWER_START].exist = false;
+		}
 	}
 	break;
 
