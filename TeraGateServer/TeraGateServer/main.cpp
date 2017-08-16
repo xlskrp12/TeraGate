@@ -85,11 +85,12 @@ void Initialize()
 			towerData[i - TOWER_START].z = 0.f;
 			towerData[i - TOWER_START].team = TEAM_N;
 		}
-		else if (1 == i - TOWER_START)
+		else if (1 == i - TOWER_START)	// 메인 게이트
 		{
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(90));
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(90));
+			towerData[i - TOWER_START].HP = NEXUS_HP;
 			towerData[i - TOWER_START].team = TEAM_N;
 		}
 		else if (2 == i - TOWER_START)
@@ -116,11 +117,12 @@ void Initialize()
 
 
 		//Left Team
-		else if (5 == i - TOWER_START)
+		else if (5 == i - TOWER_START)	// 메인 게이트
 		{
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(210));
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(210));
+			towerData[i - TOWER_START].HP = NEXUS_HP;
 			towerData[i - TOWER_START].team = TEAM_L;
 		}
 		else if (6 == i - TOWER_START)
@@ -151,6 +153,7 @@ void Initialize()
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(-30));
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(-30));
+			towerData[i - TOWER_START].HP = NEXUS_HP;
 			towerData[i - TOWER_START].team = TEAM_R;
 		}
 		else if (10 == i - TOWER_START)
@@ -175,12 +178,6 @@ void Initialize()
 			towerData[i - TOWER_START].team = TEAM_R;
 		}
 
-
-		if (i < TOWER_START + NUM_OF_NEXUS)
-		{
-			towerData[i- TOWER_START].HP = NEXUS_HP;
-			towerData[i- TOWER_START].maxHP = NEXUS_HP;
-		}
 	}
 
 	_wsetlocale(LC_ALL, L"korean");
@@ -339,9 +336,9 @@ void LoginPlayer(int id)
 		if (false == viewRange(i, id))
 			continue;
 
-		worldData[id].vlLock.lock();
-		worldData[id].viewList.insert(i);
-		worldData[id].vlLock.unlock();
+		worldData[i].vlLock.lock();
+		worldData[i].viewList.insert(i);
+		worldData[i].vlLock.unlock();
 
 		enterPacket.id = i;
 		enterPacket.x = worldData[i].obj.x;
@@ -351,7 +348,7 @@ void LoginPlayer(int id)
 		SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
 	}
 
-	//worldData[id].connected = true;
+	worldData[id].connected = true;
 }
 
 /*bool collisionCheck(int id)
@@ -779,7 +776,7 @@ void AcceptThreadStart()
 			reinterpret_cast<sockaddr *>(&client_addr), &addrSize,
 			NULL, NULL);
 
-		printf("\n클라이언트 접속");
+		printf("\n클라이언트 접속\n");
 
 		if (INVALID_SOCKET == newClient)
 		{
