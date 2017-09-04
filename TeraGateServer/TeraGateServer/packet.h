@@ -32,21 +32,24 @@
 #pragma comment(lib, "ws2_32")
 #pragma warning(disable:4996)
 
-#define OP_RECV		1
-#define OP_SEND		2
-#define OP_MOVE		3
+#define OP_RECV					1
+#define OP_SEND					2
+#define OP_MOVE					3
+#define OP_EVENT_PLAYER_MOVE	4
 
-#define PLAYER_HP	100
+#define EVENT_MOVE				10
 
-#define MONSTER_HP_STANDARD	50
-#define MONSTER_HP_MASTER	100
+#define PLAYER_HP				100
 
-#define NEXUS_HP 500
+#define MONSTER_HP_STANDARD		50
+#define MONSTER_HP_MASTER		100
 
-#define DB_CONNECT		1
-#define DB_SELECT_NAME	2
-#define DB_UPDATE		3
-#define DB_INSERT_ID	4
+#define NEXUS_HP				 500
+
+#define DB_CONNECT				1
+#define DB_SELECT_NAME			2
+#define DB_UPDATE				3
+#define DB_INSERT_ID			4
 
 using namespace std;
 using namespace chrono;
@@ -72,7 +75,8 @@ struct Object
 	int		id;
 	int		HP;
 	int		maxHp;
-	int		team;
+	int		teamID;
+	int		gateID;
 	int		skill;
 
 	bool	isActive;
@@ -92,7 +96,7 @@ struct TowerData
 
 struct WorldData {
 	SOCKET s;
-	bool connected;
+	bool connected;	
 
 	unordered_set<int> viewList;
 	mutex vlLock;

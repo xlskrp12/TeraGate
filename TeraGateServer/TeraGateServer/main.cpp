@@ -1,11 +1,12 @@
 #include "packet.h"
 #include "ErrorDisplay.h"
 #include "timer.h"
+#include "enum.h"
 
 HANDLE hIocp;
 bool isShutdown = false;
 
-WorldData worldData[NUM_OF_NPC];
+WorldData worldData[NUM_OF_NPC+NUM_NPC_PLAYER];
 TowerData towerData[NUM_OF_NEXUS + NUM_OF_GATE];
 
 priority_queue<eventType, vector<eventType>, mycomp> evtQueue, evtDB;
@@ -26,12 +27,19 @@ const bool IsNPC(const int id)
 {
 	return id >= NPC_START;
 }
+const bool IsActive(const int npc)
+{
+	return worldData[npc].obj.isActive;
+}
 
 
 
 
 void Initialize()
 {
+	int radius = 0;
+	int radian = 0;
+
 	for (auto i = 0; i < MAX_USER; ++i)
 	{
 		worldData[i].connected = false;
@@ -42,7 +50,7 @@ void Initialize()
 
 		worldData[i].obj.x = 0.f;
 		worldData[i].obj.y = 0.f;
-		worldData[i].obj.z = -10000.f;
+		worldData[i].obj.z = 0.f;
 		
 		worldData[i].recvOverlap.wsabuf.buf =
 			reinterpret_cast<CHAR *>(worldData[i].recvOverlap.iocpBuffer);
@@ -57,22 +65,128 @@ void Initialize()
 		worldData[i].connected = true;
 		worldData[i].obj.isActive = false;
 		
-		double radius = 400 + RANDOM_M(100, 600);
-		double radian = DEGREE_TO_RADIAN(RANDOM_M(0, 360));
-
-		worldData[i].obj.x = radius*cos(radian);
-		worldData[i].obj.y = 0.f;
-		worldData[i].obj.z = radius*sin(radian);
-
-		worldData[i].obj.roty = (RANDOM_M(0, 360));
-
 		//기본 몬스터
 		// 마스터 몬스터용 조건 추가 필요
 		worldData[i].obj.HP = MONSTER_HP_STANDARD;
 		worldData[i].obj.maxHp = MONSTER_HP_STANDARD;
+
+		//NPC_Player
+		radius = 2800;
+		if (i < NPC_START + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(90);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_NC;
+		}
+		//L팀
+		else if (i < 10 + NPC_START + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(RANDOM_M(190, 230));
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_L;
+			worldData[i].obj.gateID = GATE_LC;
+		}
+
+		else if (i < 20 + NPC_START + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(RANDOM_M(190, 230));
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_L;
+			worldData[i].obj.gateID = GATE_LR;
+		}
+
+		else if (i < 30 + NPC_START + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(RANDOM_M(190, 230));
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_L;
+			worldData[i].obj.gateID = GATE_LN;
+		}
+
+
+		//R팀
+		else if (i < 40 + NPC_START + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(RANDOM_M(-50, -10));
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_R;
+			worldData[i].obj.gateID = GATE_RC;
+		}
+
+		else if (i < 50 + NPC_START + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(RANDOM_M(-50, -10));
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_R;
+			worldData[i].obj.gateID = GATE_RL;
+		}
+
+		else if (i < 60 + NPC_START + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(RANDOM_M(-50, -10));
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_R;
+			worldData[i].obj.gateID = GATE_RN;
+		}
+
+
+		//N팀
+		else if (i < 70 + NPC_START + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(RANDOM_M(70, 110));
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_NC;
+		}
+
+		else if (i < 80 + NPC_START + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(RANDOM_M(70, 110));
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_NL;
+		}
+
+		else if (i < 90 + NPC_START + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(RANDOM_M(70, 110));
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_NR;
+		}
 	}
 
-	int radius = 3000;
+	radius = 3000;
 
 	for (auto i = TOWER_START; i < NUM_OF_TOWER + TOWER_START; ++i)
 	{
@@ -83,7 +197,7 @@ void Initialize()
 			towerData[i - TOWER_START].x = 0.f;
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = 0.f;
-			towerData[i - TOWER_START].team = TEAM_N;
+			towerData[i - TOWER_START].team = TEAM_NPC;
 		}
 		else if (1 == i - TOWER_START)	// 메인 게이트
 		{
@@ -91,28 +205,28 @@ void Initialize()
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(90));
 			towerData[i - TOWER_START].HP = NEXUS_HP;
-			towerData[i - TOWER_START].team = TEAM_N;
+			towerData[i - TOWER_START].team = TEAM_NPC;
 		}
 		else if (2 == i - TOWER_START)
 		{
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(90)) / 2;
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(90)) / 2;
-			towerData[i - TOWER_START].team = TEAM_N;
+			towerData[i - TOWER_START].team = TEAM_NPC;
 		}
 		else if (3 == i - TOWER_START)
 		{
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(50));
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(50));
-			towerData[i - TOWER_START].team = TEAM_N;
+			towerData[i - TOWER_START].team = TEAM_NPC;
 		}
 		else if (4 == i - TOWER_START)
 		{
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(130));
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(130));
-			towerData[i - TOWER_START].team = TEAM_N;
+			towerData[i - TOWER_START].team = TEAM_NPC;
 		}
 
 
@@ -123,28 +237,28 @@ void Initialize()
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(210));
 			towerData[i - TOWER_START].HP = NEXUS_HP;
-			towerData[i - TOWER_START].team = TEAM_L;
+			towerData[i - TOWER_START].team = TEAM_LEFT;
 		}
 		else if (6 == i - TOWER_START)
 		{
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(210)) / 2;
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(210)) / 2;
-			towerData[i - TOWER_START].team = TEAM_L;
+			towerData[i - TOWER_START].team = TEAM_LEFT;
 		}
 		else if (7 == i - TOWER_START)
 		{
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(170));
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(170));
-			towerData[i - TOWER_START].team = TEAM_L;
+			towerData[i - TOWER_START].team = TEAM_LEFT;
 		}
 		else if (8 == i - TOWER_START)
 		{
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(250));
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(250));
-			towerData[i - TOWER_START].team = TEAM_L;
+			towerData[i - TOWER_START].team = TEAM_LEFT;
 		}
 
 		//Right Team
@@ -154,28 +268,28 @@ void Initialize()
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(-30));
 			towerData[i - TOWER_START].HP = NEXUS_HP;
-			towerData[i - TOWER_START].team = TEAM_R;
+			towerData[i - TOWER_START].team = TEAM_RIGHT;
 		}
 		else if (10 == i - TOWER_START)
 		{
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(-30)) / 2;
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(-30)) / 2;
-			towerData[i - TOWER_START].team = TEAM_R;
+			towerData[i - TOWER_START].team = TEAM_RIGHT;
 		}
 		else if (11 == i - TOWER_START)
 		{
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(10));
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(10));
-			towerData[i - TOWER_START].team = TEAM_R;
+			towerData[i - TOWER_START].team = TEAM_RIGHT;
 		}
 		else if (12 == i - TOWER_START)
 		{
 			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(-70));
 			towerData[i - TOWER_START].y = 0.f;
 			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(-70));
-			towerData[i - TOWER_START].team = TEAM_R;
+			towerData[i - TOWER_START].team = TEAM_RIGHT;
 		}
 
 	}
@@ -240,6 +354,7 @@ void SendRemovePlayerPacket(int id, int object)
 
 void LoginPlayer(int id)
 {
+	//if(0==id)
 	worldData[id].obj.x = 0.f;
 	worldData[id].obj.y = 0.f;
 	worldData[id].obj.z = -200.f;
@@ -287,7 +402,7 @@ void LoginPlayer(int id)
 		SendPacket(i, reinterpret_cast<unsigned char *>(&enterPacket));
 	}
 
-	for (auto i = NPC_START; i < NUM_OF_NPC + NUM_NPC_PLAYER; ++i)
+	for (auto i = 0; i < NUM_OF_NPC + NUM_NPC_PLAYER; ++i)
 	{
 		if (false == worldData[i].connected)
 			continue;
@@ -327,26 +442,6 @@ void LoginPlayer(int id)
 		SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
 	}
 
-	for (auto i = 0; i < MAX_USER; ++i)
-	{
-		if (false == worldData[i].connected)
-			continue;
-		if (i == id)
-			continue;
-		if (false == viewRange(i, id))
-			continue;
-
-		worldData[i].vlLock.lock();
-		worldData[i].viewList.insert(i);
-		worldData[i].vlLock.unlock();
-
-		enterPacket.id = i;
-		enterPacket.x = worldData[i].obj.x;
-		enterPacket.y = worldData[i].obj.y;
-		enterPacket.z = worldData[i].obj.z;
-		enterPacket.hp = worldData[i].obj.HP;
-		SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
-	}
 
 	worldData[id].connected = true;
 }
@@ -362,8 +457,13 @@ void LoginPlayer(int id)
 	float collisionDistance;
 	float rotation;
 
+	aPosBeforeUpdate.x = worldData[id].obj.x;
+	aPosBeforeUpdate.y = worldData[id].obj.y;
+	aPosBeforeUpdate.z = worldData[id].obj.z;
+
 	for (auto a = 0; a < sizeof(worldData); a++)
 	{
+		
 
 	}
 }*/
@@ -399,6 +499,53 @@ void DBThreadStart()
 	}
 }
 
+void TimerThread()
+{
+	while (true)
+	{
+		Sleep(1);
+
+		eqLock.lock();
+		while (false == evtQueue.empty())
+		{
+			if (evtQueue.top().wakeUpTime > GetTickCount())
+				break;
+			eventType ev = evtQueue.top();
+			evtQueue.pop();
+			eqLock.unlock();
+
+			switch (ev.eventID)
+			{
+			case OP_MOVE:
+			{
+				OverlappedEx *over = new OverlappedEx;
+				over->operation = ev.eventID;
+
+				PostQueuedCompletionStatus(hIocp, 1, ev.objectID,
+					&(over->originalOverlapped));
+			}
+			break;
+
+			case EVENT_MOVE:
+			{
+				OverlappedEx *over = new OverlappedEx;
+				over->operation = OP_MOVE;
+
+				PostQueuedCompletionStatus(hIocp, 1, ev.objectID,
+					reinterpret_cast<LPOVERLAPPED>(over));
+			}
+			break;
+
+			default:
+				break;
+			}
+			eqLock.lock();
+		}
+		eqLock.unlock();
+	}
+}
+
+
 void ProcessPacket(int id, unsigned char buf[])
 {
 	float x = worldData[id].obj.x;
@@ -407,7 +554,7 @@ void ProcessPacket(int id, unsigned char buf[])
 
 	float roty = worldData[id].obj.roty;
 
-	float movement = 5.f;
+	float movement = 10.f;
 
 	switch (buf[1])
 	{
@@ -443,8 +590,10 @@ void ProcessPacket(int id, unsigned char buf[])
 		case CS_RIGHT_DOWN:
 		{
 			roty = 135;
+			
 			x += movement * sin(DEGREE_TO_RADIAN(roty));
 			z += movement * cos(DEGREE_TO_RADIAN(roty));
+			
 			cout << x << " , " << z << endl;
 		}
 		break;
@@ -497,8 +646,24 @@ void ProcessPacket(int id, unsigned char buf[])
 		case CS_ATTACK:
 			break;
 
-		case CS_SKILL:
+		case CS_SKILL_E:
+		{
+			x += 50 * movement * cos(DEGREE_TO_RADIAN(roty));
+			z += 50 * movement * sin(DEGREE_TO_RADIAN(roty));
+		}
 			break;
+
+		case CS_SHIFT_DOWN:
+		{
+			movement = 20.0f;
+		}
+		break;
+
+		case CS_SHIFT_UP:
+		{
+			movement = 10.0f;
+		}
+		break;
 
 		default:
 			cout << "Unknown type packet received\n";
@@ -515,6 +680,11 @@ void ProcessPacket(int id, unsigned char buf[])
 	worldData[id].obj.x = x;
 	worldData[id].obj.y = y;
 	worldData[id].obj.z = z;
+
+	if (CS_LEFT_UP == buf[1] || CS_RIGHT_DOWN == buf[1])
+	{
+		roty += 180;
+	}
 
 	if (CS_UP == buf[1] || CS_DOWN == buf[1])
 	{
@@ -567,6 +737,13 @@ void ProcessPacket(int id, unsigned char buf[])
 
 			if (IsNPC(i))
 			{
+				if (!IsActive(i))
+				{
+					worldData[i].obj.isActive = true;
+
+					evtQueue.push(eventType{ i, GetTickCount() + 1000, OP_MOVE });
+					//cout << "npc move" << endl;
+				}
 				continue;
 			}
 
@@ -652,6 +829,216 @@ void ProcessPacket(int id, unsigned char buf[])
 		}
 		else
 			worldData[i].vlLock.unlock();
+	}
+
+	
+	for (auto i = 0; i < MAX_USER; ++i)
+	{
+		if (false == worldData[i].connected)
+			continue;
+		if (i == id)
+			continue;
+		if (false == viewRange(i, id))
+			continue;
+
+		movPacket.id = id;
+		movPacket.x = worldData[id].obj.x;
+		movPacket.y = worldData[id].obj.y;
+		movPacket.z = worldData[id].obj.z;
+
+		SendPacket(i, reinterpret_cast<unsigned char *>(&movPacket));
+	}
+
+	for (auto i = 0; i < MAX_USER; ++i)
+	{
+		if (false == worldData[i].connected)
+			continue;
+		if (i == id)
+			continue;
+		if (false == viewRange(i, id))
+			continue;
+
+		movPacket.id = i;
+		movPacket.x = worldData[i].obj.x;
+		movPacket.y = worldData[i].obj.y;
+		movPacket.z = worldData[i].obj.z;
+
+		SendPacket(id, reinterpret_cast<unsigned char *>(&movPacket));
+	}
+}
+
+void MoveNPC(int id)
+{
+	if (false == worldData[id].obj.isActive)
+		return;
+
+	D3DXVECTOR3 _des(0.f,0.f,0.f);
+
+	float posx = worldData[id].obj.x;
+	float posz = worldData[id].obj.z;
+	float roty = worldData[id].obj.roty;
+
+	float distance = 0.f;
+	float movement = 5.0f;
+
+	unordered_set<int> viewList;
+	for (auto i = 0; i < MAX_USER; i++)
+	{
+		if (false == worldData[i].connected)
+			continue;
+		if (false == viewRange(id, i))
+			continue;
+		viewList.insert(i);
+	}
+
+	switch (worldData[id].obj.gateID)
+	{
+	case GATE_C:
+		_des = GATE_C_POS;
+		break;
+	case GATE_L:
+		_des = GATE_L_POS;
+		break;
+	case GATE_LN:
+		_des = GATE_LN_POS;
+		break;
+	case GATE_LR:
+		_des = GATE_LR_POS;
+		break;
+	case GATE_LC:
+		_des = GATE_LC_POS;
+		break;
+	case GATE_R:
+		_des = GATE_R_POS;
+		break;
+	case GATE_RN:
+		_des = GATE_RN_POS;
+		break;
+	case GATE_RL:
+		_des = GATE_RL_POS;
+		break;
+	case GATE_RC:
+		_des = GATE_RC_POS;
+		break;
+	case GATE_N:
+		_des = GATE_N_POS;
+		break;
+	case GATE_NL:
+		_des = GATE_NL_POS;
+		break;
+	case GATE_NR:
+		_des = GATE_NR_POS;
+		break;
+	case GATE_NC:
+		_des = GATE_NC_POS;
+		break;
+	}// switch(_gateID)
+	roty = RADIAN_TO_DEGREE(atan2(_des.z - posz, _des.x - posx));
+
+	//move
+	distance = sqrt(pow(_des.x - posx, 2) + pow(_des.z - posz, 2));
+	if (distance <= 0.1)
+	{
+		posx = _des.x;
+		posz = _des.z;
+	}
+	else
+	{
+		posx += movement * cos(DEGREE_TO_RADIAN(roty));
+		posz += movement * sin(DEGREE_TO_RADIAN(roty));
+	}
+
+	//out of map
+	if (pow(MAP_SIZE, 2) <= pow(posx, 2) + pow(posz, 2));
+	{
+		posx = MAP_SIZE * cos(atan2(posz, posx));
+		posz = MAP_SIZE * sin(atan2(posz, posx));
+		roty = RADIAN_TO_DEGREE(atan2(posz, posx));
+	}
+
+	worldData[id].obj.x = posx;
+	worldData[id].obj.z = posz;
+	worldData[id].obj.roty = roty;
+
+
+	unordered_set<int> newList;
+	for (auto i = 0; i < MAX_USER; i++)
+	{
+		if (false == worldData[i].connected)
+			continue;
+		if (false == viewRange(id, i))
+			continue;
+		newList.insert(i);
+	}
+
+	for (auto i : viewList)
+	{
+		if (0 == newList.count(i))
+		{
+			worldData[i].vlLock.lock();
+			worldData[i].viewList.erase(id);
+			worldData[i].vlLock.unlock();
+
+			sc_packet_remove_player packet;
+			packet.id = id;
+			packet.size = sizeof(packet);
+			packet.type = SC_REMOVE_PLAYER;
+
+			SendPacket(i, reinterpret_cast<unsigned char *>(&packet));
+		}
+		else
+		{
+			/*if (worldData[id].obj.hp == 0 || worldData[id].obj.hp > 60000)
+			{
+				worldData[i].vlLock.lock();
+				worldData[i].viewList.erase(id);
+				worldData[i].vlLock.unlock();
+
+				sc_packet_remove_player packet;
+				packet.id = id;
+				packet.size = sizeof(packet);
+				packet.type = SC_REMOVE_PLAYER;
+
+				SendRemovePlayerPacket(i, id);
+				worldData[id].connected = false;
+				worldData[id].obj.isActive = false;
+
+				evtQueue.push(eventType{ id,GetTickCount() + 30000,EVENT_MONSTER_REGEN });
+			}*/
+
+			sc_packet_pos packet;
+			packet.id = id;
+			packet.size = sizeof(packet);
+			packet.type = SC_POS;
+			packet.x = posx;
+			packet.z = posz;
+
+			packet.roty = roty;
+
+			//packet.monsterType = worldData[id].obj.type;
+
+
+			//if (AGRESSIVE == worldData[id].pl.type || BOSS == worldData[i].pl.type)
+				//evtQueue.push(eventType{ id,GetTickCount() + 1000, EVENT_MOVE });
+			//evtQueue.push(eventType{ id,GetTickCount() + 2000, EVENT_MONSTER_ATK });
+
+			evtQueue.push(eventType{ id,GetTickCount() + 1000, EVENT_MOVE });
+
+			SendPacket(i, reinterpret_cast<unsigned char *>(&packet));
+		}
+	}
+
+	for (auto i : newList)
+	{
+		if (0 != viewList.count(i))
+			continue;
+
+		sc_packet_put_player packet;
+		packet.id = id;
+		packet.size = sizeof(packet);
+		packet.type = SC_PUT_PLAYER;
+
+		SendPacket(i, reinterpret_cast<unsigned char *>(&packet));
 	}
 }
 
@@ -739,6 +1126,7 @@ void WorkerThreadStart()
 
 		else if (OP_MOVE == myOverlap->operation)
 		{
+			//MoveNPC(key);
 			delete myOverlap;
 		}
 
@@ -803,96 +1191,6 @@ void AcceptThreadStart()
 		}
 
 		worldData[newID].s = newClient;
-		/*worldData[newID].obj.x = 0.f;
-		worldData[newID].obj.y = 0.f;
-		worldData[newID].obj.z = -100.f;
-		worldData[newID].obj.roty = -180;
-		worldData[newID].packetSize = 0;
-		worldData[newID].previousSize = 0;
-		memset(&worldData[newID].recvOverlap.originalOverlapped, 0,
-			sizeof(worldData[newID].recvOverlap.originalOverlapped));
-
-		CreateIoCompletionPort(reinterpret_cast<HANDLE>(newClient),
-			hIocp, newID, 0);
-
-		worldData[newID].vlLock.lock();
-		worldData[newID].viewList.clear();
-		worldData[newID].vlLock.unlock();
-
-		sc_packet_put_player enterPacket;
-		enterPacket.id = newID;
-		enterPacket.size = sizeof(enterPacket);
-		enterPacket.type = SC_PUT_PLAYER;
-		enterPacket.x = worldData[newID].obj.x;
-		enterPacket.y = worldData[newID].obj.y;
-		enterPacket.z = worldData[newID].obj.z;
-		enterPacket.roty = worldData[newID].obj.roty;
-
-		SendPacket(newID, reinterpret_cast<unsigned char *>(&enterPacket));
-		//worldData[newID].exist = true;
-
-		for (auto i = 0; i < MAX_USER; ++i)
-		{
-			if (false == worldData[i].connected)
-				continue;
-			if (i == newID)
-				continue;
-			if (false == viewRange(i, newID))
-				continue;
-
-			worldData[i].vlLock.lock();
-			worldData[i].viewList.insert(newID);
-			worldData[i].vlLock.unlock();
-
-			SendPacket(i, reinterpret_cast<unsigned char *>(&enterPacket));
-		}
-
-		for (auto i = NPC_START; i < NUM_OF_NPC; ++i)
-		{
-			if (false == worldData[i].connected)
-				continue;
-			if (i == newID)
-				continue;
-			if (false == viewRange(i, newID))
-				continue;
-
-			worldData[newID].vlLock.lock();
-			worldData[newID].viewList.insert(i);
-			worldData[newID].vlLock.unlock();
-
-			enterPacket.id = i;
-			enterPacket.x = worldData[i].obj.x;
-			enterPacket.y = worldData[i].obj.y;
-			enterPacket.z = worldData[i].obj.z;
-
-			enterPacket.roty = worldData[i].obj.roty;
-
-			enterPacket.hp = worldData[i].obj.HP;
-
-			SendPacket(newID, reinterpret_cast<unsigned char *>(&enterPacket));
-		}
-
-		for (auto i = 0; i < MAX_USER; ++i)
-		{
-			if (false == worldData[i].connected)
-				continue;
-			if (i == newID)
-				continue;
-			if (false == viewRange(i, newID))
-				continue;
-
-			worldData[newID].vlLock.lock();
-			worldData[newID].viewList.insert(i);
-			worldData[newID].vlLock.unlock();
-
-			enterPacket.id = i;
-			enterPacket.x = worldData[i].obj.x;
-			enterPacket.y = worldData[i].obj.y;
-			enterPacket.z = worldData[i].obj.z;
-			SendPacket(newID, reinterpret_cast<unsigned char *>(&enterPacket));
-		}
-
-		worldData[newID].connected = true;*/
 
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(newClient),
 			hIocp, newID, 0);
@@ -929,6 +1227,8 @@ int main()
 		workerThread.push_back(new thread{ WorkerThreadStart });
 	}
 
+	thread timerThread{ TimerThread };
+
 	thread acceptThread{ AcceptThreadStart };
 
 	thread DBThread{ DBThreadStart };
@@ -943,6 +1243,8 @@ int main()
 		th->join();
 		delete th;
 	}
+
+	timerThread.join();
 
 	acceptThread.join();
 

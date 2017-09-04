@@ -159,6 +159,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="enum.h" />
     <ClInclude Include="ErrorDisplay.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="protocol.h" />

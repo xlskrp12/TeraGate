@@ -14,7 +14,7 @@
 #define RANDOM_S(STANDARD, SIZE) ((STANDARD)-((SIZE)/2)+rand()%(SIZE)) //time.h
 #define RANDOM_M(MIN, MAX) ((MIN) + rand()%((MAX)+1-(MIN)))            //time.h
 
-#define MAP_SIZE		2000
+#define MAP_SIZE		3150
 
 #define VIEW_RADIUS		20000
 
@@ -54,7 +54,10 @@
 
 #define CS_LOGIN				10
 #define CS_ATTACK				11
-#define CS_SKILL				12
+#define CS_SKILL_E				12
+
+#define CS_SHIFT_DOWN			16
+#define CS_SHIFT_UP				17
 
 //서버->클라
 #define	SC_POS				1
@@ -63,9 +66,9 @@
 #define SC_ATTACK			4
 
 //팀 구분
-#define TEAM_L			1	//Left
-#define TEAM_R			2	//Right
-#define TEAM_N			3	//NPC
+#define TEAM_LEFT			1	//Left
+#define TEAM_RIGHT			2	//Right
+#define TEAM_NPC			3	//NPC
 
 #pragma pack(push,1)
 
