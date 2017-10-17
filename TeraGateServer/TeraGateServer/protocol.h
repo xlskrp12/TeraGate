@@ -16,22 +16,27 @@
 
 #define MAP_SIZE		3150
 
-#define VIEW_RADIUS		20000
+#define VIEW_RADIUS		5000
 
 #define NUM_THREADS		4
 
 #define MAX_USER		6
+#define USER_START		40
 
 //#define NPC_PLAYER_START	10
 #define NUM_NPC_PLAYER		4
 
-#define NPC_START		100
-#define NUM_OF_NPC		190
+#define NPC_START		10
+#define NUM_OF_NPC		94
+#define NUM_OF_NPC_AND_PLAYER		100
 
-#define TOWER_START		1000
-#define NUM_OF_NEXUS	3
-#define NUM_OF_GATE		10
+//#define TOWER_START		1000
+//#define NUM_OF_NEXUS	3
+//#define NUM_OF_GATE		10
 #define NUM_OF_TOWER	13
+#define NUM_OF_STONE	27
+
+#define NUM_OF_OBJECT	140
 
 #define MY_SERVER_PORT	4000
 
@@ -42,22 +47,25 @@
 #define	NPC_ATTACK		1
 
 //클라->서버 
-#define CS_MOUSE_MOVE			1
-#define CS_RIGHT_UP				2
-#define CS_LEFT_UP				3
-#define CS_RIGHT_DOWN			4
-#define CS_LEFT_DOWN			5
-#define CS_UP					6
-#define CS_DOWN					7
-#define CS_LEFT					8
-#define CS_RIGHT				9
-
-#define CS_LOGIN				10
-#define CS_ATTACK				11
-#define CS_SKILL_E				12
-
-#define CS_SHIFT_DOWN			16
-#define CS_SHIFT_UP				17
+enum 
+{
+	CS_RIGHT_UP,				
+	CS_LEFT_UP,				
+	CS_RIGHT_DOWN,			
+	CS_LEFT_DOWN,			
+	CS_UP,					
+	CS_DOWN	,				
+	CS_LEFT,					
+	CS_RIGHT,		
+	
+	CS_LOGIN,				
+	CS_LOGOUT,				
+	CS_ATTACK,				
+	CS_SKILL_E,				
+	
+	CS_SHIFT_DOWN,			
+	CS_SHIFT_UP				
+};
 
 //서버->클라
 #define	SC_POS				1
@@ -65,10 +73,7 @@
 #define SC_REMOVE_PLAYER	3
 #define SC_ATTACK			4
 
-//팀 구분
-#define TEAM_LEFT			1	//Left
-#define TEAM_RIGHT			2	//Right
-#define TEAM_NPC			3	//NPC
+
 
 #pragma pack(push,1)
 
@@ -150,9 +155,13 @@ struct sc_packet_put_player {
 	BYTE type;
 	WORD id;
 
+	WORD playerNum;
 	WORD hp;
 	WORD maxHp;
 	WORD monsterType;
+
+	WORD teamId;
+	WORD gateId;
 
 	float x;
 	float y;

@@ -6,8 +6,7 @@
 HANDLE hIocp;
 bool isShutdown = false;
 
-WorldData worldData[NUM_OF_NPC+NUM_NPC_PLAYER];
-TowerData towerData[NUM_OF_NEXUS + NUM_OF_GATE];
+WorldData worldData[NUM_OF_OBJECT];
 
 priority_queue<eventType, vector<eventType>, mycomp> evtQueue, evtDB;
 mutex eqLock, dbLock;
@@ -25,7 +24,7 @@ bool viewRange(int a, int b)
 
 const bool IsNPC(const int id)
 {
-	return id >= NPC_START;
+	return id >= MAX_USER && id < NUM_OF_NPC_AND_PLAYER;
 }
 const bool IsActive(const int npc)
 {
@@ -35,272 +34,6 @@ const bool IsActive(const int npc)
 
 
 
-void Initialize()
-{
-	int radius = 0;
-	int radian = 0;
-
-	for (auto i = 0; i < MAX_USER; ++i)
-	{
-		worldData[i].connected = false;
-		worldData[i].recvOverlap.operation = OP_RECV;
-
-		worldData[i].obj.HP = PLAYER_HP;
-		worldData[i].obj.maxHp = PLAYER_HP;
-
-		worldData[i].obj.x = 0.f;
-		worldData[i].obj.y = 0.f;
-		worldData[i].obj.z = 0.f;
-		
-		worldData[i].recvOverlap.wsabuf.buf =
-			reinterpret_cast<CHAR *>(worldData[i].recvOverlap.iocpBuffer);
-
-		worldData[i].recvOverlap.wsabuf.len =
-			sizeof(worldData[i].recvOverlap.iocpBuffer);
-
-	}
-	
-	for (auto i = NPC_START; i < NUM_OF_NPC + NUM_NPC_PLAYER; ++i)
-	{
-		worldData[i].connected = true;
-		worldData[i].obj.isActive = false;
-		
-		//기본 몬스터
-		// 마스터 몬스터용 조건 추가 필요
-		worldData[i].obj.HP = MONSTER_HP_STANDARD;
-		worldData[i].obj.maxHp = MONSTER_HP_STANDARD;
-
-		//NPC_Player
-		radius = 2800;
-		if (i < NPC_START + NUM_NPC_PLAYER)
-		{
-			radian = DEGREE_TO_RADIAN(90);
-			worldData[i].obj.x = radius*cos(radian);
-			worldData[i].obj.y = 0;
-			worldData[i].obj.z = radius*sin(radian);
-			worldData[i].obj.teamID = TEAM_N;
-			worldData[i].obj.gateID = GATE_NC;
-		}
-		//L팀
-		else if (i < 10 + NPC_START + NUM_NPC_PLAYER)
-		{
-			radian = DEGREE_TO_RADIAN(RANDOM_M(190, 230));
-			worldData[i].obj.x = radius*cos(radian);
-			worldData[i].obj.y = 0;
-			worldData[i].obj.z = radius*sin(radian);
-			worldData[i].obj.roty = RANDOM_M(0, 360);
-			worldData[i].obj.teamID = TEAM_L;
-			worldData[i].obj.gateID = GATE_LC;
-		}
-
-		else if (i < 20 + NPC_START + NUM_NPC_PLAYER)
-		{
-			radian = DEGREE_TO_RADIAN(RANDOM_M(190, 230));
-			worldData[i].obj.x = radius*cos(radian);
-			worldData[i].obj.y = 0;
-			worldData[i].obj.z = radius*sin(radian);
-			worldData[i].obj.roty = RANDOM_M(0, 360);
-			worldData[i].obj.teamID = TEAM_L;
-			worldData[i].obj.gateID = GATE_LR;
-		}
-
-		else if (i < 30 + NPC_START + NUM_NPC_PLAYER)
-		{
-			radian = DEGREE_TO_RADIAN(RANDOM_M(190, 230));
-			worldData[i].obj.x = radius*cos(radian);
-			worldData[i].obj.y = 0;
-			worldData[i].obj.z = radius*sin(radian);
-			worldData[i].obj.roty = RANDOM_M(0, 360);
-			worldData[i].obj.teamID = TEAM_L;
-			worldData[i].obj.gateID = GATE_LN;
-		}
-
-
-		//R팀
-		else if (i < 40 + NPC_START + NUM_NPC_PLAYER)
-		{
-			radian = DEGREE_TO_RADIAN(RANDOM_M(-50, -10));
-			worldData[i].obj.x = radius*cos(radian);
-			worldData[i].obj.y = 0;
-			worldData[i].obj.z = radius*sin(radian);
-			worldData[i].obj.roty = RANDOM_M(0, 360);
-			worldData[i].obj.teamID = TEAM_R;
-			worldData[i].obj.gateID = GATE_RC;
-		}
-
-		else if (i < 50 + NPC_START + NUM_NPC_PLAYER)
-		{
-			radian = DEGREE_TO_RADIAN(RANDOM_M(-50, -10));
-			worldData[i].obj.x = radius*cos(radian);
-			worldData[i].obj.y = 0;
-			worldData[i].obj.z = radius*sin(radian);
-			worldData[i].obj.roty = RANDOM_M(0, 360);
-			worldData[i].obj.teamID = TEAM_R;
-			worldData[i].obj.gateID = GATE_RL;
-		}
-
-		else if (i < 60 + NPC_START + NUM_NPC_PLAYER)
-		{
-			radian = DEGREE_TO_RADIAN(RANDOM_M(-50, -10));
-			worldData[i].obj.x = radius*cos(radian);
-			worldData[i].obj.y = 0;
-			worldData[i].obj.z = radius*sin(radian);
-			worldData[i].obj.roty = RANDOM_M(0, 360);
-			worldData[i].obj.teamID = TEAM_R;
-			worldData[i].obj.gateID = GATE_RN;
-		}
-
-
-		//N팀
-		else if (i < 70 + NPC_START + NUM_NPC_PLAYER)
-		{
-			radian = DEGREE_TO_RADIAN(RANDOM_M(70, 110));
-			worldData[i].obj.x = radius*cos(radian);
-			worldData[i].obj.y = 0;
-			worldData[i].obj.z = radius*sin(radian);
-			worldData[i].obj.roty = RANDOM_M(0, 360);
-			worldData[i].obj.teamID = TEAM_N;
-			worldData[i].obj.gateID = GATE_NC;
-		}
-
-		else if (i < 80 + NPC_START + NUM_NPC_PLAYER)
-		{
-			radian = DEGREE_TO_RADIAN(RANDOM_M(70, 110));
-			worldData[i].obj.x = radius*cos(radian);
-			worldData[i].obj.y = 0;
-			worldData[i].obj.z = radius*sin(radian);
-			worldData[i].obj.roty = RANDOM_M(0, 360);
-			worldData[i].obj.teamID = TEAM_N;
-			worldData[i].obj.gateID = GATE_NL;
-		}
-
-		else if (i < 90 + NPC_START + NUM_NPC_PLAYER)
-		{
-			radian = DEGREE_TO_RADIAN(RANDOM_M(70, 110));
-			worldData[i].obj.x = radius*cos(radian);
-			worldData[i].obj.y = 0;
-			worldData[i].obj.z = radius*sin(radian);
-			worldData[i].obj.roty = RANDOM_M(0, 360);
-			worldData[i].obj.teamID = TEAM_N;
-			worldData[i].obj.gateID = GATE_NR;
-		}
-	}
-
-	radius = 3000;
-
-	for (auto i = TOWER_START; i < NUM_OF_TOWER + TOWER_START; ++i)
-	{
-		towerData[i- TOWER_START].exist = true;
-		// NPC Team 
-		if (0 == i - TOWER_START)
-		{
-			towerData[i - TOWER_START].x = 0.f;
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = 0.f;
-			towerData[i - TOWER_START].team = TEAM_NPC;
-		}
-		else if (1 == i - TOWER_START)	// 메인 게이트
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(90));
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(90));
-			towerData[i - TOWER_START].HP = NEXUS_HP;
-			towerData[i - TOWER_START].team = TEAM_NPC;
-		}
-		else if (2 == i - TOWER_START)
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(90)) / 2;
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(90)) / 2;
-			towerData[i - TOWER_START].team = TEAM_NPC;
-		}
-		else if (3 == i - TOWER_START)
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(50));
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(50));
-			towerData[i - TOWER_START].team = TEAM_NPC;
-		}
-		else if (4 == i - TOWER_START)
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(130));
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(130));
-			towerData[i - TOWER_START].team = TEAM_NPC;
-		}
-
-
-		//Left Team
-		else if (5 == i - TOWER_START)	// 메인 게이트
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(210));
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(210));
-			towerData[i - TOWER_START].HP = NEXUS_HP;
-			towerData[i - TOWER_START].team = TEAM_LEFT;
-		}
-		else if (6 == i - TOWER_START)
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(210)) / 2;
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(210)) / 2;
-			towerData[i - TOWER_START].team = TEAM_LEFT;
-		}
-		else if (7 == i - TOWER_START)
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(170));
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(170));
-			towerData[i - TOWER_START].team = TEAM_LEFT;
-		}
-		else if (8 == i - TOWER_START)
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(250));
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(250));
-			towerData[i - TOWER_START].team = TEAM_LEFT;
-		}
-
-		//Right Team
-		else if (9 == i - TOWER_START)
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(-30));
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(-30));
-			towerData[i - TOWER_START].HP = NEXUS_HP;
-			towerData[i - TOWER_START].team = TEAM_RIGHT;
-		}
-		else if (10 == i - TOWER_START)
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(-30)) / 2;
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(-30)) / 2;
-			towerData[i - TOWER_START].team = TEAM_RIGHT;
-		}
-		else if (11 == i - TOWER_START)
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(10));
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(10));
-			towerData[i - TOWER_START].team = TEAM_RIGHT;
-		}
-		else if (12 == i - TOWER_START)
-		{
-			towerData[i - TOWER_START].x = radius*cos(DEGREE_TO_RADIAN(-70));
-			towerData[i - TOWER_START].y = 0.f;
-			towerData[i - TOWER_START].z = radius*sin(DEGREE_TO_RADIAN(-70));
-			towerData[i - TOWER_START].team = TEAM_RIGHT;
-		}
-
-	}
-
-	_wsetlocale(LC_ALL, L"korean");
-
-	WSADATA wsa;
-	WSAStartup(MAKEWORD(2, 2), &wsa);
-
-	hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
-}
 
 void SendPacket(int id, unsigned char *packet)
 {
@@ -317,6 +50,7 @@ void SendPacket(int id, unsigned char *packet)
 	{
 		int errNo = WSAGetLastError();
 		errDisplay("SendPacket:WSASend", errNo);
+		cout << id << endl;
 		while (true);
 	}
 }
@@ -328,6 +62,8 @@ void SendPutPlayerPacket(int id, int object)
 	packet.size = sizeof(packet);
 	packet.type = SC_PUT_PLAYER;
 
+	packet.playerNum = worldData[object].obj.playerNum;
+
 	packet.x = worldData[object].obj.x;
 	packet.y = worldData[object].obj.y;
 	packet.z = worldData[object].obj.z;
@@ -336,6 +72,10 @@ void SendPutPlayerPacket(int id, int object)
 
 	packet.hp = worldData[object].obj.HP;
 	packet.maxHp = worldData[object].obj.maxHp;
+
+	packet.teamId = worldData[object].obj.teamID;
+	//if(object > MAX_USER)
+	packet.gateId = worldData[object].obj.gateID;
 
 	//packet.monsterType = worldData[object].obj.type;
 
@@ -354,12 +94,29 @@ void SendRemovePlayerPacket(int id, int object)
 
 void LoginPlayer(int id)
 {
-	//if(0==id)
-	worldData[id].obj.x = 0.f;
-	worldData[id].obj.y = 0.f;
-	worldData[id].obj.z = -200.f;
-	worldData[id].obj.roty = 0;
-	worldData[id].obj.HP = PLAYER_HP;
+	cout << "login start" << endl;
+	double radius = 2800;
+	double radian = 0;
+	if (0 == id || 2==id ||4==id)
+	{
+		radian = DEGREE_TO_RADIAN(210);
+		worldData[id].obj.x = radius*cos(radian);
+		worldData[id].obj.y = 0.f;
+		worldData[id].obj.z = radius*sin(radian);
+		worldData[id].obj.roty = 0;
+		worldData[id].obj.HP = PLAYER_HP;
+		worldData[id].obj.teamID = TEAM_L;
+	}
+	else
+	{
+		radian = DEGREE_TO_RADIAN(-30);
+		worldData[id].obj.x = radius*cos(radian);
+		worldData[id].obj.y = 0.f;
+		worldData[id].obj.z = radius*sin(radian);
+		worldData[id].obj.roty = 0;
+		worldData[id].obj.HP = PLAYER_HP;
+		worldData[id].obj.teamID = TEAM_R;
+	}
 
 	worldData[id].packetSize = 0;
 	worldData[id].previousSize = 0;
@@ -380,6 +137,16 @@ void LoginPlayer(int id)
 	enterPacket.y = worldData[id].obj.y;
 	enterPacket.z = worldData[id].obj.z;
 	enterPacket.roty = worldData[id].obj.roty;
+
+	enterPacket.playerNum = id;
+	cout << id << endl;
+
+	enterPacket.teamId = worldData[id].obj.teamID;
+	if (14 > worldData[id].obj.gateID)
+		enterPacket.gateId = worldData[id].obj.gateID;
+	else
+		enterPacket.gateId = GATE_TOTAL;
+
 	enterPacket.hp = worldData[id].obj.HP;
 
 	SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
@@ -402,7 +169,7 @@ void LoginPlayer(int id)
 		SendPacket(i, reinterpret_cast<unsigned char *>(&enterPacket));
 	}
 
-	for (auto i = 0; i < NUM_OF_NPC + NUM_NPC_PLAYER; ++i)
+	for (auto i = 0; i < NUM_OF_OBJECT; ++i)
 	{
 		if (false == worldData[i].connected)
 			continue;
@@ -410,6 +177,12 @@ void LoginPlayer(int id)
 			continue;
 		if (false == viewRange(i, id))
 			continue;
+
+		if (IsNPC(i) && (!IsActive(i)))
+		{
+			worldData[i].obj.isActive = true;
+			evtQueue.push(eventType{ i, GetTickCount() + 1000, OP_MOVE });
+		}
 
 		worldData[id].vlLock.lock();
 		worldData[id].viewList.insert(i);
@@ -422,28 +195,32 @@ void LoginPlayer(int id)
 
 		enterPacket.roty = worldData[i].obj.roty;
 
+		enterPacket.teamId = worldData[i].obj.teamID;
+		enterPacket.gateId = worldData[i].obj.gateID;
+
 		enterPacket.hp = worldData[i].obj.HP;
-
-		SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
-	}
-
-	for (auto i = TOWER_START; i < NUM_OF_TOWER + TOWER_START; ++i)
-	{
-		if (i == id)
-			continue;
-
-		enterPacket.id = i;
-		enterPacket.x = towerData[i - TOWER_START].x;
-		enterPacket.y = towerData[i - TOWER_START].y;
-		enterPacket.z = towerData[i - TOWER_START].z;
-
-		enterPacket.hp = towerData[i - TOWER_START].HP;
 
 		SendPacket(id, reinterpret_cast<unsigned char *>(&enterPacket));
 	}
 
 
 	worldData[id].connected = true;
+	sc_packet_pos firstPacket;
+	firstPacket.id = id;
+	firstPacket.x = worldData[id].obj.x;
+	firstPacket.y = worldData[id].obj.y;
+	firstPacket.z = worldData[id].obj.z;
+	firstPacket.roty = worldData[id].obj.roty;
+
+	firstPacket.type = SC_POS;
+	firstPacket.size = sizeof(firstPacket);
+
+	SendPacket(id, reinterpret_cast<unsigned char *>(&firstPacket));
+}
+
+void logoutPlayer(int id)
+{
+	worldData[id].connected = false;
 }
 
 /*bool collisionCheck(int id)
@@ -545,6 +322,401 @@ void TimerThread()
 	}
 }
 
+void Initialize()
+{
+	int radius = 0;
+	int radian = 0;
+
+	int count = 0;
+	for (auto i = 0; i < MAX_USER; ++i)
+	{
+		worldData[i].connected = false;
+		worldData[i].recvOverlap.operation = OP_RECV;
+
+		worldData[i].obj.HP = PLAYER_HP;
+		worldData[i].obj.maxHp = PLAYER_HP;
+
+		worldData[i].obj.playerNum = i;
+
+		if (0 == i || 2 == i || 4 == i)
+		{
+			radian = DEGREE_TO_RADIAN(210);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = 0.f;
+
+			worldData[i].obj.teamID = TEAM_L;
+		}
+		else
+		{
+			radian = DEGREE_TO_RADIAN(-30);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = 0.f;
+
+			worldData[i].obj.teamID = TEAM_R;
+		}
+
+
+		worldData[i].recvOverlap.wsabuf.buf =
+			reinterpret_cast<CHAR *>(worldData[i].recvOverlap.iocpBuffer);
+
+		worldData[i].recvOverlap.wsabuf.len =
+			sizeof(worldData[i].recvOverlap.iocpBuffer);
+
+		cout << (i) / 140.f * 100.f << "%  초기화 완료 , " << count << endl;
+		count++;
+	}
+
+	
+	for (auto i = MAX_USER; i < NUM_OF_NPC_AND_PLAYER; ++i)
+	{
+		worldData[i].connected = true;
+		worldData[i].obj.isActive = false;
+		worldData[i].obj.playerNum = 1000;
+
+		//기본 몬스터
+		// 마스터 몬스터용 조건 추가 필요
+		worldData[i].obj.HP = MONSTER_HP_STANDARD;
+		worldData[i].obj.maxHp = MONSTER_HP_STANDARD;
+
+		//NPC_Player
+		radius = 2800;
+		if (i < MAX_USER + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(90);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_NC;
+		}
+		//L팀
+		//else if (i < 30 + NPC_START + NUM_NPC_PLAYER)
+		else if (i < 10 + MAX_USER + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(210);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_L;
+			worldData[i].obj.gateID = GATE_LC;
+		}
+
+		//if (i < 60 + NPC_START + NUM_NPC_PLAYER )
+		else if (i < 20 + MAX_USER + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(215);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_L;
+			worldData[i].obj.gateID = GATE_LR;
+		}
+
+		//if (i < 90 + NPC_START + NUM_NPC_PLAYER)
+		else if (i < 30 + MAX_USER + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(205);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_L;
+			worldData[i].obj.gateID = GATE_LN;
+		}
+
+
+		//R팀
+		//if (i < 120 + NPC_START + NUM_NPC_PLAYER)
+		else if (i < 40 + MAX_USER + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(-30);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_R;
+			worldData[i].obj.gateID = GATE_RC;
+		}
+
+		//if (i < 150 + NPC_START + NUM_NPC_PLAYER )
+		else if (i < 50 + MAX_USER + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(-35);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_R;
+			worldData[i].obj.gateID = GATE_RL;
+		}
+
+		//if (i < 180 + NPC_START + NUM_NPC_PLAYER )
+		else if (i < 60 + MAX_USER + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(-25);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_R;
+			worldData[i].obj.gateID = GATE_RN;
+		}
+
+
+		//N팀
+		//if (i < 210 + NPC_START + NUM_NPC_PLAYER )
+		else if (i < 70 + MAX_USER + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(90);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_NC;
+		}
+
+		//if (i < 240 + NPC_START + NUM_NPC_PLAYER )
+		else if (i < 80 + MAX_USER + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(95);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_NL;
+		}
+
+		//if (i < 270 + NPC_START + NUM_NPC_PLAYER )
+		else if (i < 90 + MAX_USER + NUM_NPC_PLAYER)
+		{
+			radian = DEGREE_TO_RADIAN(85);
+			worldData[i].obj.x = radius*cos(radian);
+			worldData[i].obj.y = 0;
+			worldData[i].obj.z = radius*sin(radian);
+			worldData[i].obj.roty = RANDOM_M(0, 360);
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_NR;
+		}
+		cout << (i) / 140.f * 100.f << "%  초기화 완료 , " << count << endl;
+		count++;
+	}
+
+	radius = 3000;
+	for (auto i = NUM_OF_NPC_AND_PLAYER; i < NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; ++i)
+	{
+		worldData[i].connected = true;
+		worldData[i].obj.HP = NEXUS_HP;
+		// NPC Team 
+		if (100 == i)
+		{
+			worldData[i].obj.x = 0.f;
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = 0.f;
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_C;
+		}
+		else if (101 == i )	// 메인 게이트
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(90));
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(90));
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_N;
+		}
+		else if (102 == i)
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(90)) / 2;
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(90)) / 2;
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_NC;
+		}
+		else if (103 == i )
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(50));
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(50));
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_NR;
+		}
+		else if (104 == i )
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(130));
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(130));
+			worldData[i].obj.teamID = TEAM_N;
+			worldData[i].obj.gateID = GATE_NL;
+		}
+
+
+		//Left Team
+		else if (105 == i )	// 메인 게이트
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(210));
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(210));
+			worldData[i].obj.teamID = TEAM_L;
+			worldData[i].obj.gateID = GATE_L;
+		}
+		else if (106 == i )
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(210)) / 2;
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(210)) / 2;
+			worldData[i].obj.teamID = TEAM_L;
+			worldData[i].obj.gateID = GATE_LC;
+		}
+		else if (107 == i )
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(170));
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(170));
+			worldData[i].obj.teamID = TEAM_L;
+			worldData[i].obj.gateID = GATE_LN;
+		}
+		else if (108 == i )
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(250));
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(250));
+			worldData[i].obj.teamID = TEAM_L;
+			worldData[i].obj.gateID = GATE_LR;
+		}
+
+		//Right Team
+		else if (109 == i )
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(-30));
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(-30));
+			worldData[i].obj.teamID = TEAM_R;
+			worldData[i].obj.gateID = GATE_R;
+		}
+		else if (110 == i )
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(-30)) / 2;
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(-30)) / 2;
+			worldData[i].obj.teamID = TEAM_R;
+			worldData[i].obj.gateID = GATE_RC;
+		}
+		else if (111 == i )
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(10));
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(10));
+			worldData[i].obj.teamID = TEAM_R;
+			worldData[i].obj.gateID = GATE_RN;
+		}
+		else if (112 == i )
+		{
+			worldData[i].obj.x = radius*cos(DEGREE_TO_RADIAN(-70));
+			worldData[i].obj.y = 0.f;
+			worldData[i].obj.z = radius*sin(DEGREE_TO_RADIAN(-70));
+			worldData[i].obj.teamID = TEAM_R;
+			worldData[i].obj.gateID = GATE_RL;
+		}
+
+		cout << (i) / 140.f * 100.f << "%  초기화 완료 , " << count << endl;
+		count++;
+	}
+
+
+	// 바위 * 9
+	for (auto i = NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i < 4 + NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i++)
+	{
+		radius = 1500;
+		radian = DEGREE_TO_RADIAN(10 + i * 16);//10~50도 
+		worldData[i].obj.x = radius*cos(radian);
+		worldData[i].obj.y = RANDOM_M(-50, 0);
+		worldData[i].obj.z = radius*sin(radian);
+		worldData[i].obj.roty = RANDOM_M(0, 360);
+
+		cout << (i) / 140.f * 100.f << "%  초기화 완료 , " << count << endl;
+		count++;
+	}
+	for (auto i = 4 + NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i< 9 + NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i++)
+	{
+		radius = 1700;
+		radian = DEGREE_TO_RADIAN(i * 15);//0~60도 
+		worldData[i].obj.x = radius*cos(radian);
+		worldData[i].obj.y = RANDOM_M(-50, 0);
+		worldData[i].obj.z = radius*sin(radian);
+		worldData[i].obj.roty = RANDOM_M(0, 360);
+
+		cout << (i) / 140.f * 100.f << "%  초기화 완료 , " << count << endl;
+		count++;
+	}
+	// 바위 * 9
+	for (auto i = 9 + NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i< 13 + NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i++)
+	{
+		radius = 1500;
+		radian = DEGREE_TO_RADIAN(-70 - i * 16);//-70~-110도 
+		worldData[i].obj.x = radius*cos(radian);
+		worldData[i].obj.y = RANDOM_M(-50, 0);
+		worldData[i].obj.z = radius*sin(radian);
+		worldData[i].obj.roty = RANDOM_M(0, 360);
+
+		cout << (i) / 140.f * 100.f << "%  초기화 완료 , " << count << endl;
+		count++;
+	}
+	for (auto i = 13 + NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i< 18 + NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i++)
+	{
+		radius = 1700;
+		radian = DEGREE_TO_RADIAN(-60 - i * 15);//-60~-120도 
+		worldData[i].obj.x = radius*cos(radian);
+		worldData[i].obj.y = RANDOM_M(-50, 0);
+		worldData[i].obj.z = radius*sin(radian);
+		worldData[i].obj.roty = RANDOM_M(0, 360);
+
+		cout << (i) / 140.f * 100.f << "%  초기화 완료 , " << count << endl;
+		count++;
+	}
+	// 바위 * 9
+	for (auto i = 18 + NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i< 22 + NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i++)
+	{
+		radius = 1500;
+		radian = DEGREE_TO_RADIAN(130 + i * 16);//130~170도
+		worldData[i].obj.x = radius*cos(radian);
+		worldData[i].obj.y = RANDOM_M(-50, 0);
+		worldData[i].obj.z = radius*sin(radian);
+		worldData[i].obj.roty = RANDOM_M(0, 360);
+
+		cout << (i) / 140.f * 100.f << "%  초기화 완료 , " << count << endl;
+		count++;
+	}
+	for (auto i = 22 + NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i< 27 + NUM_OF_NPC_AND_PLAYER + NUM_OF_TOWER; i++)
+	{
+		radius = 1700;
+		radian = DEGREE_TO_RADIAN(120 + i * 15);//-60~-120도 
+		worldData[i].obj.x = radius*cos(radian);
+		worldData[i].obj.y = RANDOM_M(-50, 0);
+		worldData[i].obj.z = radius*sin(radian);
+		worldData[i].obj.roty = RANDOM_M(0, 360);
+
+		cout << (i) / 140.f * 100.f << "%  초기화 완료 , " << count << endl;
+		count++;
+	}
+
+	
+
+	_wsetlocale(LC_ALL, L"korean");
+
+	WSADATA wsa;
+	WSAStartup(MAKEWORD(2, 2), &wsa);
+
+	hIocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
+}
+
 
 void ProcessPacket(int id, unsigned char buf[])
 {
@@ -563,11 +735,17 @@ void ProcessPacket(int id, unsigned char buf[])
 			cs_packet_login *my_packet = reinterpret_cast<cs_packet_login *>(buf);
 
 			evtDB.push(eventType{ id,GetTickCount(),DB_SELECT_NAME });
+			cout << "CS_LOGIN 확인" << endl;
 		}
 		break;
 
-		case CS_MOUSE_MOVE:
-			break;
+		case CS_LOGOUT:
+		{
+			//cs_packet_login *my_packet = reinterpret_cast<cs_packet_login *>(buf);
+			logoutPlayer(id);
+
+		}
+		break;
 
 		case CS_RIGHT_UP:
 		{
@@ -644,10 +822,14 @@ void ProcessPacket(int id, unsigned char buf[])
 		break;
 
 		case CS_ATTACK:
+		{
+
+		}
 			break;
 
 		case CS_SKILL_E:
 		{
+			movement = 20.0f;
 			x += 50 * movement * cos(DEGREE_TO_RADIAN(roty));
 			z += 50 * movement * sin(DEGREE_TO_RADIAN(roty));
 		}
@@ -711,7 +893,7 @@ void ProcessPacket(int id, unsigned char buf[])
 	cout << id << "mov" << endl;
 
 	unordered_set<int> newList;
-	for (auto i = 0; i < NUM_OF_NPC + NUM_NPC_PLAYER; ++i)
+	for (auto i = 0; i < NUM_OF_OBJECT; ++i)
 	{
 
 		if (false == worldData[i].connected)
@@ -735,7 +917,7 @@ void ProcessPacket(int id, unsigned char buf[])
 
 			SendPutPlayerPacket(id, i);
 
-			if (IsNPC(i))
+			if (true == IsNPC(i))
 			{
 				if (!IsActive(i))
 				{
@@ -753,12 +935,15 @@ void ProcessPacket(int id, unsigned char buf[])
 				worldData[i].viewList.insert(id);
 				worldData[i].vlLock.unlock();
 
+				//cout << "a" << endl;
+
 				SendPutPlayerPacket(i, id);
 			}
 			else
 			{
 				worldData[i].vlLock.unlock();
 
+				//cout << "b" << endl;
 				SendPacket(i, reinterpret_cast<unsigned char *>(&movPacket));
 			}
 		}
@@ -766,29 +951,34 @@ void ProcessPacket(int id, unsigned char buf[])
 		else
 		{
 			worldData[id].vlLock.unlock();
-			movPacket.id = i;
+			/*movPacket.id = i;
 
 			movPacket.x = worldData[i].obj.x;
 			movPacket.y = worldData[i].obj.y;
 			movPacket.z = worldData[i].obj.z;
 			movPacket.roty = worldData[i].obj.roty;
 
-			SendPacket(id, reinterpret_cast<unsigned char *>(&movPacket));
+			//cout << "c" << endl;
+			SendPacket(id, reinterpret_cast<unsigned char *>(&movPacket));*/
 
 			if (IsNPC(i))
 				continue;
 
 			worldData[i].vlLock.lock();
-			if (0 != worldData[i].viewList.count(id))
+			if (1 == worldData[i].viewList.count(id))
 			{
-				worldData[i].viewList.insert(id);
 				worldData[i].vlLock.unlock();
-				SendPutPlayerPacket(i, id);
+				//cout << "e" << endl;
+				SendPacket(i, reinterpret_cast<unsigned char *>(&movPacket));
 			}
 			else
 			{
+				worldData[i].viewList.insert(id);
 				worldData[i].vlLock.unlock();
-				SendPacket(i, reinterpret_cast<unsigned char *>(&movPacket));
+
+				//cout << "d" << endl;
+				SendPutPlayerPacket(i, id);
+				
 			}
 		}
 	}
@@ -832,7 +1022,7 @@ void ProcessPacket(int id, unsigned char buf[])
 	}
 
 	
-	for (auto i = 0; i < MAX_USER; ++i)
+	/*for (auto i = 0; i < MAX_USER; ++i)
 	{
 		if (false == worldData[i].connected)
 			continue;
@@ -846,6 +1036,7 @@ void ProcessPacket(int id, unsigned char buf[])
 		movPacket.y = worldData[id].obj.y;
 		movPacket.z = worldData[id].obj.z;
 
+		//cout << "f" << endl;
 		SendPacket(i, reinterpret_cast<unsigned char *>(&movPacket));
 	}
 
@@ -863,8 +1054,9 @@ void ProcessPacket(int id, unsigned char buf[])
 		movPacket.y = worldData[i].obj.y;
 		movPacket.z = worldData[i].obj.z;
 
+		//cout << "g" << endl;
 		SendPacket(id, reinterpret_cast<unsigned char *>(&movPacket));
-	}
+	}*/
 }
 
 void MoveNPC(int id)
@@ -879,7 +1071,7 @@ void MoveNPC(int id)
 	float roty = worldData[id].obj.roty;
 
 	float distance = 0.f;
-	float movement = 5.0f;
+	float movement = 20.0f;
 
 	unordered_set<int> viewList;
 	for (auto i = 0; i < MAX_USER; i++)
@@ -949,17 +1141,21 @@ void MoveNPC(int id)
 	}
 
 	//out of map
-	if (pow(MAP_SIZE, 2) <= pow(posx, 2) + pow(posz, 2));
+	if (pow(MAP_SIZE, 2) <= pow(posx, 2) + pow(posz, 2))
 	{
 		posx = MAP_SIZE * cos(atan2(posz, posx));
 		posz = MAP_SIZE * sin(atan2(posz, posx));
 		roty = RADIAN_TO_DEGREE(atan2(posz, posx));
 	}
 
+
 	worldData[id].obj.x = posx;
 	worldData[id].obj.z = posz;
 	worldData[id].obj.roty = roty;
 
+
+	//if (105 == id)
+		//cout <<id <<"번npc"<< worldData[id].obj.x << "  ,   " << worldData[id].obj.z << endl;
 
 	unordered_set<int> newList;
 	for (auto i = 0; i < MAX_USER; i++)
@@ -1011,6 +1207,7 @@ void MoveNPC(int id)
 			packet.size = sizeof(packet);
 			packet.type = SC_POS;
 			packet.x = posx;
+			packet.y = worldData[id].obj.y;
 			packet.z = posz;
 
 			packet.roty = roty;
@@ -1126,7 +1323,7 @@ void WorkerThreadStart()
 
 		else if (OP_MOVE == myOverlap->operation)
 		{
-			//MoveNPC(key);
+			MoveNPC(key);
 			delete myOverlap;
 		}
 
@@ -1191,6 +1388,7 @@ void AcceptThreadStart()
 		}
 
 		worldData[newID].s = newClient;
+		cout << newID << endl;
 
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(newClient),
 			hIocp, newID, 0);
@@ -1235,7 +1433,7 @@ int main()
 	
 	while (false == isShutdown)
 	{
-		if (timer.isOn())	{	}
+		if (timer.isOn()) {}
 	}
 
 	for (auto th : workerThread)

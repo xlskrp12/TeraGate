@@ -73,6 +73,7 @@ struct Object
 	float		roty;
 
 	int		id;
+	int		playerNum;
 	int		HP;
 	int		maxHp;
 	int		teamID;
@@ -80,18 +81,6 @@ struct Object
 	int		skill;
 
 	bool	isActive;
-};
-
-struct TowerData
-{
-	bool exist;
-	float x;
-	float y;
-	float z;
-
-	int HP;
-	int maxHP;
-	int team;
 };
 
 struct WorldData {
