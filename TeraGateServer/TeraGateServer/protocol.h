@@ -47,25 +47,23 @@
 #define	NPC_ATTACK		1
 
 //클라->서버 
-enum 
-{
-	CS_RIGHT_UP,				
-	CS_LEFT_UP,				
-	CS_RIGHT_DOWN,			
-	CS_LEFT_DOWN,			
-	CS_UP,					
-	CS_DOWN	,				
-	CS_LEFT,					
-	CS_RIGHT,		
+#define	CS_RIGHT_UP			1				
+#define	CS_LEFT_UP			2			
+#define	CS_RIGHT_DOWN		3		
+#define	CS_LEFT_DOWN		4		
+#define	CS_UP				5			
+#define	CS_DOWN				6			
+#define	CS_LEFT				7				
+#define	CS_RIGHT			8	
+
+#define	CS_LOGIN			9			
+#define	CS_LOGOUT			10				
+#define	CS_ATTACK			11			
+#define	CS_SKILL_E			12			
 	
-	CS_LOGIN,				
-	CS_LOGOUT,				
-	CS_ATTACK,				
-	CS_SKILL_E,				
-	
-	CS_SHIFT_DOWN,			
-	CS_SHIFT_UP				
-};
+#define	CS_SHIFT_DOWN		13			
+#define	CS_SHIFT_UP			14		
+
 
 //서버->클라
 #define	SC_POS				1
@@ -134,7 +132,6 @@ struct sc_packet_pos
 	BYTE size;
 	BYTE type;
 	WORD id;
-	WORD monsterType;
 	float x;
 	float y;
 	float z;
@@ -151,23 +148,21 @@ struct sc_packet_attack
 };
 
 struct sc_packet_put_player {
+	WORD id;
 	BYTE size;
 	BYTE type;
-	WORD id;
-
-	WORD playerNum;
-	WORD hp;
-	WORD maxHp;
-	WORD monsterType;
-
-	WORD teamId;
-	WORD gateId;
-
+	
 	float x;
 	float y;
 	float z;
 
 	float roty;
+
+	WORD hp;
+	WORD maxHp;
+
+	WORD teamId;
+	WORD gateId;
 };
 
 struct sc_packet_remove_player {

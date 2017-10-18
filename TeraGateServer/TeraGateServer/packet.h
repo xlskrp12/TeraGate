@@ -37,14 +37,17 @@
 #define OP_MOVE					3
 #define OP_EVENT_PLAYER_MOVE	4
 
+
 #define EVENT_MOVE				10
+#define EVENT_ATK				11
 
 #define PLAYER_HP				100
 
 #define MONSTER_HP_STANDARD		50
 #define MONSTER_HP_MASTER		100
 
-#define NEXUS_HP				 500
+#define NEXUS_HP				500
+#define NEXUS_MAXHP				500
 
 #define DB_CONNECT				1
 #define DB_SELECT_NAME			2
@@ -73,14 +76,35 @@ struct Object
 	float		roty;
 
 	int		id;
-	int		playerNum;
 	int		HP;
 	int		maxHp;
 	int		teamID;
 	int		gateID;
-	int		skill;
 
 	bool	isActive;
+};
+
+struct TowerData {
+	bool exist;
+	float x;
+	float y;
+	float z;
+
+	float roty;
+	int HP;
+	int maxHP;
+	int	teamID;
+	int	gateID;
+};
+
+struct StoneData {
+	bool exist;
+	float x;
+	float y;
+	float z;
+
+	float roty;
+
 };
 
 struct WorldData {
