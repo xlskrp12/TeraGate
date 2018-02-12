@@ -1,0 +1,49 @@
+#include<stdio.h>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+class Object
+{
+private:
+    int _key;
+public:
+    int  getKey()        { return _key; }
+    void setKey(int key) { _key = key;  }
+};
+void vectorTest()
+{
+    vector<Object*> v;
+    Object* object;
+    //생성
+    for(int i=0;i<10;i++)
+    {
+        object = new Object;
+        object->setKey(i);
+        v.push_back(object);
+    }
+    //생성-인덱스
+    object = new Object;
+    object->setKey(999);
+    v.insert(v.begin()+0, object);
+    //삭제-인덱스
+    v.erase(v.begin()+0);
+    //스왑 0~1번 인덱스
+    swap(v[0], v[1]);
+    //출력
+    for(int i=0;i<v.size();i++)
+        printf("db[%d]->getKey() : %d\n", i, v[i]->getKey());
+    //삭제
+    for(int i=0;i<v.size();)
+    {
+        printf("db[%d] 삭제\n", v.size()-1);
+        delete v[v.size()-1];
+        v.erase(v.begin()+v.size()-1);// [인덱스N] 삭제 v.erase(v.begin()+N);
+    }
+    //출력 (모두 삭제해서 출력할게 없다.)
+    for(int i=0;i<v.size();i++)
+        printf("db[%d]->getKey() : %d\n", i, v[i]->getKey());
+}
+void main(){
+    vectorTest();
+}

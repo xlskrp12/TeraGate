@@ -1,0 +1,40 @@
+# 참고 싸이트
+MSDN
+https://msdn.microsoft.com/ko-kr/windows/desktop/ee663266.aspx
+
+rastertek, 빠재
+http://ppparkje.tistory.com/category/%EA%B0%95%EC%A2%8C%EB%B2%88%EC%97%AD/DirectX%2011
+
+ETC
+http://mlpworld.tistory.com/entry/DirectX3D-%EC%B4%88%EA%B8%B0%ED%99%94-%EA%B3%BC%EC%A0%95
+http://blog.naver.com/PostView.nhn?blogId=sorkelf&logNo=40161605210
+
+
+DXGI, DirectXGraphicsInfrastructure
+D3D렌더링 기능에 비해 상대적으로 변화가 느린, 하드웨어를 다루는 기능을 D3D로부터 분리한 모듈.
+
+IDXGIFactory
+DXGI를 사용하기 위해 필요한 각종 인터페이스를 얻어오는 인터페이스.
+DXGI를 사용하기 위해 CreateDXGIFactory()함수로 인터페이스를 얻는다.
+
+IDXGIAdapter
+그래픽스 카드 관련기능을 다루는 인터페이스.
+
+IDXGIOutput
+그래픽스 카드에 연결된 디스플레이 관련기능을 다룬다.
+이 인터페이스를 사용함으로써 대응하는 디스플레이 모드(해상도나 Refresh모드)또는 감마설정 등을 할 수 있다.
+
+IDXGISwapChain
+화면을 표시하는 스왑체인기능을 다루는 인터페이스.
+D3D11CreateDeviceAndSwapChain()함수로 인터페이스를 얻는다.
+
+ID3D10Blob
+BLOB(Binary Larget Object)는 데이터 값(글픽, 사운드, 텍스트 등)을 DB에 저장하기 위한 바이트 연속체.
+..다 필요없고 이 친구는 그냥 버퍼 인터페이스라고 생각하면 된다.
+
+dds 파일포맷
+DDS(Direct Draw Surface)는 DirectX에서 이미지 텍스쳐를 위해 지원하는 포맷이다.
+DirectX SDK Utilities 폴더에 DirectX Texture Tool혹은 DxTex등의 이름으로 편집 툴이 제공된다.
+
+HLSL주의점
+PixelShader, VertexShader, texture 등의 이름은 이미 예약되어 있는 이름이므로 사용자지정 변수나 함수 이름으로 사용하지 말자..

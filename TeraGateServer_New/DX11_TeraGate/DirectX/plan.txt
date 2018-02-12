@@ -1,0 +1,7 @@
+- 땅 생성
+- 팀별 본진 생성
+- Object 추상클래스
+- Object 상속
+- ObjectManager, Object Vector컨테이너
+- NPC 생성, AI
+- PC 생성
